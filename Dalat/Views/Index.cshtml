@@ -1,0 +1,227 @@
+﻿@model Umbraco.Cms.Core.Models.ContentModel
+@{
+    var lang = "ar";
+    var isEn = lang == "en";
+    var dir  = isEn ? "ltr" : "rtl";
+    ViewData["Lang"] = lang;
+    ViewData["Dir"]  = dir;
+    ViewData["Title"] = isEn ? "Dalat School" : "مدارس دالات";
+
+    // ── translations ──────────────────────────────────────────
+    // pageHeader
+    var ph_welcome     = isEn ? "Welcome to Dalat School"           : "مرحبًا بك في مدارس دالات";
+    var ph_register    = isEn ? "Get started by registering"        : "للتسجيل";
+
+    // about_dalat
+    var ad_title       = isEn ? "About Dalat"                       : "عن دالات";
+    var ad_desc        = isEn
+        ? "In the heart of Al-Aarid district in northern Riyadh, Dalat thrives with a renewed educational vision, led by founders with over 15 years of experience in establishing distinguished schools. Dalat is not just a school building—it is an environment where young girls grow with confidence and where the future takes shape with steady steps."
+        : "في قلب حي العارض شمال الرياض، تنبض دالات برؤية تعليمية متجددة، يقودها ملاك بخبرة تربوية تمتد لأكثر من 15 عامًا في تأسيس المدارس المتميزة. دالات ليست مجرد مبنى مدرسي، بل بيئة تنمو فيها الطالبات بثقة، ويتشكل فيها المستقبل بخطى ثابتة.";
+
+    // features
+    var df_pillars     = isEn ? "Three pillars that make Dalat exceptional"           : "ثلاث ركائز تصنع تميّز دالات";
+
+    var cards = new[]
+    {
+        (
+            Image:    "/images/card1.png",
+            Title:    isEn ? "An Environment that Fosters Confidence and Capabilities" : "بيئة تنمّي الثقة والقدرات",
+            Subtitle: isEn ? "Bright classrooms and comfortable spaces… instill in the student a sense of safety and open horizons for growth."
+                           : "فصول مشرقة، ومساحات مريحة… تزرع في الطالبة شعور الأمان وتفتح لها آفاق النمو."
+        ),
+        (
+            Image:    "/images/card2.png",
+            Title:    isEn ? "Comfort Built on Care" : "راحة تُبنى على عناية",
+            Subtitle: isEn ? "Continuous sterilization and smart, carefully designed facilities… for a daily experience that is elegant and safe."
+                           : "تعقيم مستمر، ومرافق ذكية مصممة بعناية… لتجربة يومية راقية وآمنة."
+        ),
+        (
+            Image:    "/images/card3.png",
+            Title:    isEn ? "Learning That Is Lived, Not Memorized" : "تعلّم يُعاش لا يُحفظ",
+            Subtitle: isEn ? "Interactive activities and modern methods… make knowledge grow with the student, not limited to the book."
+                           : "أنشطة تفاعلية وأساليب حديثة… تجعل المعرفة تنمو مع الطالبة، لا تقف عند الكتاب."
+        ),
+    };
+
+    // safe journey
+    var sj_mainTitle    = isEn ? "Safe Journey"              : "الرحلة الآمنة";
+    var sj_mainSub      = isEn ? "Between movement, focus, and fun… we paint the features of the school as we dream it."
+                                : "ما بين الحركة، والتركيز، والمتعة… نرسم ملامح المدرسة كما نحلم بها.";
+
+    var facilities = new[]
+    {
+        (
+            Icon:     "/icons/estadios.svg",
+            Alt:      "Estadios",
+            Title:    isEn ? "Playgrounds and sports facilities" : "الملاعب والمرافق الرياضية",
+            Desc:     isEn ? "Spacious areas for movement and fun that boost physical activity and nurture team spirit."
+                           : "مساحات واسعة للحركة والمرح، تعزز النشاط البدني وتغذّي روح الفريق.",
+            ImgRight: true
+        ),
+        (
+            Icon:     "/icons/reading.svg",
+            Alt:      "Reading",
+            Title:    isEn ? "The Reading Corner and Library" : "ركن القراءة والمكتبة",
+            Desc:     isEn ? "A quiet corner that sparks imagination and instills a love of knowledge in an environment that encourages focus and calm."
+                           : "ركن هادئ يُشعل الخيال، ويغرس حب المعرفة في بيئة تحفّز التركيز والهدوء.",
+            ImgRight: false
+        ),
+        (
+            Icon:     "/icons/school-nursery.svg",
+            Alt:      "School Nursery",
+            Title:    isEn ? "School Nursery" : "مشتل المدرسة",
+            Desc:     isEn ? "A green space that teaches patience and growth, bringing students closer to nature through gardening activities that cultivate responsibility and belonging."
+                           : "مساحة خضراء تُعلّم الصبر والنمو، وتقرّب الطالبة من الطبيعة، من خلال أنشطة زراعية تزرع معها المسؤولية والانتماء.",
+            ImgRight: true
+        ),
+        (
+            Icon:     "/icons/virtual-reality-hall.svg",
+            Alt:      "Virtual Reality Hall",
+            Title:    isEn ? "Virtual Reality Hall" : "قاعة الواقع الافتراضي",
+            Desc:     isEn ? "An educational experience that takes you beyond the classroom boundaries… an interactive virtual world that enhances understanding and makes learning vivid and inspiring."
+                           : "تجربة تعليمية تنقلك خارج حدود الصف… عالم افتراضي تفاعلي يعزز الفهم، ويجعل التعلم حيًا وملهمًا.",
+            ImgRight: false
+        ),
+    };
+
+    // registration
+    var rg_title       = isEn ? "Be part of Dalat"                             : "كوني جزءًا من دالات";
+    var rg_subtitle    = isEn ? "Here, opportunities are created, and journeys begin with confidence"
+                               : "هنا تُصنع الفرص، وتبدأ الرحلات بثقة";
+    var rg_joinTitle   = isEn ? "Join our team"              : "للانضمام إلى فريق العمل";
+    var rg_joinText    = isEn ? "If you believe that education is a mission, and you're looking for an environment that values your dedication… send your CV to the following email:"
+                               : "إذا كنتِ ممن يؤمن بأن التعليم رسالة، ونبحث عن بيئة تُقدّر عطائك… أرسلي سيرتك الذاتية على البريد التالي:";
+    var rg_studTitle   = isEn ? "Student registration"       : "للتسجيل";
+    var rg_studText    = isEn ? "We receive registration requests from parents wishing to schedule an introductory meeting. Contact us via WhatsApp:"
+                               : "نستقبل طلبات التسجيل من أولياء الأمور الراغبين في حجز مقابلة تعريفية، للتواصل عبر الواتساب:";
+
+    // text alignment
+    var textAlign = isEn ? "left" : "right";
+    var marginTop = isEn ? "0" : "150px";
+}
+
+<!-- ═══════════════════════════════════════════
+     SECTION 1 — Page Header
+═══════════════════════════════════════════ -->
+<section class="ph-pageHeader">
+    <div class="ph-imageWrapper">
+        <img src="~/icons/hero.svg" alt="Hero" class="ph-heroImage" />
+    </div>
+    <div class="ph-textContent">
+        <h1 class="ph-title">@ph_welcome</h1>
+        <button class="ph-ctaButton" onclick="scrollToSection('Admission-and-registration')">
+            @ph_register
+        </button>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 2 — About Dalat
+═══════════════════════════════════════════ -->
+<section id="About-dalat" class="ad-aboutSection">
+    <div class="ad-container">
+        <div class="ad-textContent">
+            <h2 class="ad-title" style="text-align:@textAlign">@ad_title</h2>
+            <p  class="ad-subtitle" style="text-align:@textAlign">@ad_desc</p>
+        </div>
+        <div class="ad-imageWrapper">
+            <img src="~/icons/about-dalat.svg" alt="@ad_title" class="ad-image" />
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 3 — Dalat Features / Cards
+═══════════════════════════════════════════ -->
+<section class="df-featuresSection">
+    <h2 class="df-title">@df_pillars</h2>
+
+    <div class="df-cardsWrapper">
+        @foreach (var card in cards)
+        {
+            <div class="df-card">
+                <div class="df-imageContainer">
+                    <img src="@card.Image" alt="@card.Title" class="df-image" />
+                    <img src="~/icons/stars.svg" class="df-decorSvg df-decorTopLeft"    alt="" />
+                    <img src="~/icons/stars.svg" class="df-decorSvg df-decorBottomRight" alt="" />
+                    <img src="~/icons/stars.svg" class="df-decorSvg df-decorCenter"     alt="" />
+                    <img src="~/icons/stars.svg" class="df-decorSvg df-decorBottomLeft" alt="" />
+                    <img src="~/icons/stars.svg" class="df-decorSvg df-decorTopRight"   alt="" />
+                    <img src="~/icons/stars.svg" class="df-decorSvg df-decorTop"        alt="" />
+                </div>
+                <h3 class="df-cardTitle">@card.Title</h3>
+                <p  class="df-cardSubtitle" style="text-align:@textAlign">@card.Subtitle</p>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 4 — Safe Journey
+═══════════════════════════════════════════ -->
+<section id="Safe-Journey" class="sj-estadiosSection">
+    <div class="sj-header">
+        <h2 class="sj-mainTitle">@sj_mainTitle</h2>
+        <p  class="sj-mainSubtitle">@sj_mainSub</p>
+    </div>
+
+    @foreach (var (fac, idx) in facilities.Select((f, i) => (f, i)))
+    {
+        @if (fac.ImgRight)
+        {
+            <!-- text left / image right -->
+            <div class="sj-bottomContent">
+                <div class="sj-textContent" style="margin-top:@marginTop">
+                    <h3 class="sj-sideTitle"   style="text-align:@textAlign">@fac.Title</h3>
+                    <p  class="sj-sideSubtitle" style="text-align:@textAlign">@fac.Desc</p>
+                </div>
+                <div class="sj-svgWrapper">
+                    <img src="@fac.Icon" alt="@fac.Alt" class="sj-svgImage" />
+                </div>
+            </div>
+        }
+        else
+        {
+            <!-- image left / text right -->
+            <div class="sj-bottomContent">
+                <div class="sj-svgWrapper">
+                    <img src="@fac.Icon" alt="@fac.Alt" class="sj-svgImage" />
+                </div>
+                <div class="sj-textContent" style="margin-top:@marginTop">
+                    <h3 class="sj-sideTitle"   style="text-align:@textAlign">@fac.Title</h3>
+                    <p  class="sj-sideSubtitle" style="text-align:@textAlign">@fac.Desc</p>
+                </div>
+            </div>
+        }
+    }
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 5 — Admission & Registration
+═══════════════════════════════════════════ -->
+<section id="Admission-and-registration" class="rg-registrationSection">
+    <div class="rg-header">
+        <h2 class="rg-title">@rg_title</h2>
+        <p  class="rg-subtitle">@rg_subtitle</p>
+    </div>
+
+    <div class="rg-cardsContainer">
+        <!-- Card 1: Join Team -->
+        <a href="/join-team" class="rg-card rg-cardLink" style="text-decoration:none; color:inherit;">
+            <img src="~/icons/teacher.svg" alt="Join Team" class="rg-icon" />
+            <h3 class="rg-cardTitle">@rg_joinTitle</h3>
+            <p  class="rg-cardText" style="text-align:@textAlign">@rg_joinText</p>
+            <p  class="rg-contact" style="color:#667eea; font-weight:600;">
+                @(isEn ? "Apply Now →" : "تقدمي الآن ←")
+            </p>
+        </a>
+
+        <!-- Card 2: Student Registration -->
+        <div class="rg-card">
+            <img src="~/icons/story.svg" alt="Student Registration" class="rg-icon" />
+            <h3 class="rg-cardTitle">@rg_studTitle</h3>
+            <p  class="rg-cardText" style="text-align:@textAlign">@rg_studText</p>
+            <p  class="rg-contact">0553317849499 📞</p>
+        </div>
+    </div>
+</section>
