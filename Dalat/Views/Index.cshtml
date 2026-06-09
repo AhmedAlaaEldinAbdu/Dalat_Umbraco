@@ -1,11 +1,14 @@
-﻿@model Umbraco.Cms.Core.Models.ContentModel
+@model Umbraco.Cms.Core.Models.ContentModel
 @{
-    var lang = "ar";
+    // Read language preference from cookie; default to Arabic
+    var lang = Context.Request.Cookies["lang"] ?? "ar";
+    if (lang != "ar" && lang != "en") lang = "ar";
     var isEn = lang == "en";
     var dir  = isEn ? "ltr" : "rtl";
     ViewData["Lang"] = lang;
     ViewData["Dir"]  = dir;
     ViewData["Title"] = isEn ? "Dalat School" : "مدارس دالات";
+
 
     // ── translations ──────────────────────────────────────────
     // pageHeader
