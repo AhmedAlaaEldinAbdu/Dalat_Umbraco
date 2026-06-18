@@ -1,12 +1,87 @@
 @using Umbraco.Forms.Web.Models
 @model FieldViewModel
 @{
+    var langCookie   = Context.Request.Cookies["lang"] ?? "ar";
+    var isEn         = langCookie == "en";
     var currentValue = Model.Values?.FirstOrDefault() ?? string.Empty;
     var mandatory    = Model.Mandatory ? "required" : null;
+    var fieldId      = "gd_" + Model.Id.ToString().Replace("-","");
+    var shadowId     = fieldId + "_shadow";
 }
-<input type="date"
-       name="@Model.Alias"
-       id="@Model.Id"
-       value="@currentValue"
+
+<link rel="stylesheet" href="/css/pikaday.css" />
+
+@* Visible input — Pikaday attaches here *@
+<input type="text"
+       id="@fieldId"
        class="umbraco-forms-field-wrapper"
-       required="@mandatory" />
+       required="@mandatory"
+       placeholder="@(isEn ? "dd/mm/yyyy" : "يوم/شهر/سنة")"
+       autocomplete="off"
+       readonly="readonly" />
+
+@* Hidden input — submits ISO date value to Umbraco Forms *@
+<input type="hidden"
+       id="@shadowId"
+       name="@Model.Alias"
+       value="@currentValue" />
+
+<script>
+(function () {
+    var FIELD_ID  = '@fieldId';
+    var SHADOW_ID = '@shadowId';
+    var IS_EN     = @(isEn ? "true" : "false");
+
+    var AR_MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+    var AR_DAYS   = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+    var AR_DAYS_S = ['أح','إث','ث','أر','خ','ج','س'];
+
+    function loadScript(src, cb) {
+        if (document.querySelector('script[src="' + src + '"]')) { cb(); return; }
+        var s = document.createElement('script');
+        s.src = src; s.onload = cb; document.head.appendChild(s);
+    }
+
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+    function initPicker() {
+        var field  = document.getElementById(FIELD_ID);
+        var shadow = document.getElementById(SHADOW_ID);
+        if (!field || !shadow || field._gdPicker) return;
+
+        // Today at local midnight — used to disable future dates
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        var picker = new Pikaday({
+            field        : field,
+            yearRange    : [1900, today.getFullYear()],
+            // Disable future dates using a function — avoids UTC/local timezone issues
+            disableDayFn : function (date) {
+                var d = new Date(date);
+                d.setHours(0, 0, 0, 0);
+                return d > today;
+            },
+            i18n: IS_EN ? undefined : {
+                previousMonth : 'الشهر السابق',
+                nextMonth     : 'الشهر التالي',
+                months        : AR_MONTHS,
+                weekdays      : AR_DAYS,
+                weekdaysShort : AR_DAYS_S
+            },
+            onSelect: function (date) {
+                var iso = date.getFullYear() + '-' + pad(date.getMonth()+1) + '-' + pad(date.getDate());
+                var fmt = pad(date.getDate()) + '/' + pad(date.getMonth()+1) + '/' + date.getFullYear();
+                field.value  = fmt;
+                shadow.value = iso;
+            }
+        });
+
+        field._gdPicker = picker;
+    }
+
+    loadScript('/js/moment.min.js', function () {
+        loadScript('/js/pikaday.js', initPicker);
+    });
+})();
+</script>

@@ -106,82 +106,154 @@
 
 @section Scripts {
 <script>
+// Override moment Arabic locale to use Gregorian month names (not Hijri)
 (function () {
-    var isEn = '@lang' === 'en';
-
-    var GR = {
-        changeMonth      : true,
-        changeYear       : true,
-        yearRange        : 'c-100:c+10',
-        dateFormat       : 'dd/mm/yy',
-        dayNames         : isEn
-            ? ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']
-            : ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'],
-        dayNamesShort    : isEn
-            ? ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
-            : ['أحد','إثن','ثلا','أرب','خمي','جمع','سبت'],
-        dayNamesMin      : isEn
-            ? ['Su','Mo','Tu','We','Th','Fr','Sa']
-            : ['أح','إث','ث','أر','خ','ج','س'],
-        monthNames       : isEn
-            ? ['January','February','March','April','May','June','July','August','September','October','November','December']
-            : ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'],
-        monthNamesShort  : isEn
-            ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-            : ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'],
-        isRTL            : !isEn,
-        showMonthAfterYear: false,
-        yearSuffix       : '',
-        onSelect: function (dateText, inst) {
-            // Convert Arabic-Indic digits (٠-٩) to Western digits (0-9)
-            var western = dateText.replace(/[٠-٩]/g, function (d) {
-                return d.charCodeAt(0) - 0x0660;
-            });
-            // Also convert Extended Arabic-Indic digits (۰-۹) used by some locales
-            western = western.replace(/[۰-۹]/g, function (d) {
-                return d.charCodeAt(0) - 0x06F0;
-            });
-            $(this).val(western);
-        }
-    };
-
-    function installPatch() {
-        if (typeof $ === 'undefined' || !$.fn || !$.fn.datepicker) {
-            setTimeout(installPatch, 50);
-            return;
-        }
-
-        // ── Overwrite Arabic regionals so Forms gets Gregorian on init ──
-        $.datepicker.regional['ar']    = GR;
-        $.datepicker.regional['ar-SA'] = GR;
-        $.datepicker.regional['']      = GR;
-        $.datepicker.setDefaults(GR);
-
-        // ── Monkey-patch $.fn.datepicker so every future init uses GR ──
-        // String calls ('destroy', 'getDate', etc.) pass through untouched.
-        var _orig = $.fn.datepicker;
-        $.fn.datepicker = function (opts) {
-            if (typeof opts !== 'string') {
-                // Merge caller options with GR; GR fields always win
-                opts = $.extend({}, opts || {}, GR);
-                return _orig.call(this, opts);
-            }
-            return _orig.apply(this, arguments);
-        };
-        // Copy static members ($.fn.datepicker.regional etc.) across
-        $.extend($.fn.datepicker, _orig);
-
-        // ── Repatch any pickers already on the page ──
-        $('.ajb-formWrap .hasDatepicker').each(function () {
-            try { _orig.call($(this), 'destroy'); } catch(e) {}
-            _orig.call($(this), GR);
-        });
+    function patchMoment() {
+        if (typeof moment === 'undefined') { setTimeout(patchMoment, 100); return; }
+        var arMonths = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+        moment.updateLocale('ar', { months: arMonths, monthsShort: arMonths });
     }
-
-    installPatch();
-    // Also run after page scripts finish, in case datepicker loaded late
-    document.addEventListener('DOMContentLoaded', installPatch);
-    setTimeout(installPatch, 300);
+    patchMoment();
 })();
 </script>
+
+@if (!isEn)
+{
+<script>
+(function translateForm() {
+
+    // ── Field labels ──────────────────────────────────────────────────────
+    var labels = {
+        // Personal
+        'First Name'              : 'الاسم الأول',
+        'FIRST NAME'              : 'الاسم الأول',
+        'Middle Name'             : 'الاسم الأوسط',
+        'MIDDLE NAME'             : 'الاسم الأوسط',
+        'Last Name'               : 'اسم العائلة',
+        'LAST NAME'               : 'اسم العائلة',
+        'Gender'                  : 'الجنس',
+        'GENDER'                  : 'الجنس',
+        'National ID Number'      : 'رقم الهوية الوطنية',
+        'NATIONAL ID NUMBER'      : 'رقم الهوية الوطنية',
+        'birthDate'               : 'تاريخ الميلاد',
+        'Birth Date'              : 'تاريخ الميلاد',
+        'BIRTH DATE'              : 'تاريخ الميلاد',
+        // Contact
+        'Email Address'           : 'البريد الإلكتروني',
+        'EMAIL ADDRESS'           : 'البريد الإلكتروني',
+        'Email'                   : 'البريد الإلكتروني',
+        'EMAIL'                   : 'البريد الإلكتروني',
+        'Phone Number'            : 'رقم الهاتف',
+        'PHONE NUMBER'            : 'رقم الهاتف',
+        'Phone number'            : 'رقم الهاتف',
+        'Mobile Number'           : 'رقم الجوال',
+        'MOBILE NUMBER'           : 'رقم الجوال',
+        'Mobile number'           : 'رقم الجوال',
+        'Address'                 : 'العنوان',
+        'ADDRESS'                 : 'العنوان',
+        'City'                    : 'المدينة',
+        'CITY'                    : 'المدينة',
+        'Country'                 : 'الدولة',
+        'COUNTRY'                 : 'الدولة',
+        // Section headings
+        'Personal Information'    : 'المعلومات الشخصية',
+        'PERSONAL INFORMATION'    : 'المعلومات الشخصية',
+        'Contact Information'     : 'معلومات التواصل',
+        'CONTACT INFORMATION'     : 'معلومات التواصل',
+        'Professional Information' : 'المعلومات المهنية',
+        'PROFESSIONAL INFORMATION' : 'المعلومات المهنية',
+        'Additional Information'  : 'معلومات إضافية',
+        'ADDITIONAL INFORMATION'  : 'معلومات إضافية',
+        // Submit
+        'Submit'                  : 'إرسال',
+        'SUBMIT'                  : 'إرسال',
+        'Send'                    : 'إرسال',
+        // Dropdown options
+        'Male'                    : 'ذكر',
+        'Female'                  : 'أنثى',
+        'Please select'           : 'اختر...',
+        '-- Select --'            : 'اختر...',
+        'Select'                  : 'اختر...'
+    };
+
+    // ── Placeholders ──────────────────────────────────────────────────────
+    var placeholders = {
+        'Enter your first name'   : 'أدخل اسمك الأول',
+        'Enter your middle name'  : 'أدخل اسمك الأوسط',
+        'Enter your last name'    : 'أدخل اسم العائلة',
+        'Enter your ID Number'    : 'أدخل رقم الهوية',
+        'Example: mail@domain.com': 'مثال: mail@domain.com',
+        'Enter your mobile number': 'أدخل رقم جوالك',
+        'Enter your phone number' : 'أدخل رقم هاتفك',
+        'Enter your address'      : 'أدخل عنوانك',
+        'Enter your city'         : 'أدخل مدينتك'
+    };
+
+    function translateText(map, text) {
+        if (!text) return null;
+        var t = text.trim();
+        return map[t] || null;
+    }
+
+    function applyTranslations() {
+        var wrap = document.querySelector('.ajb-formWrap');
+        if (!wrap) return;
+
+        // Labels — handle text node + optional mandatory indicator span
+        wrap.querySelectorAll('label').forEach(function (el) {
+            el.childNodes.forEach(function (node) {
+                if (node.nodeType === 3) {
+                    var ar = translateText(labels, node.textContent);
+                    if (ar) node.textContent = node.textContent.replace(node.textContent.trim(), ar);
+                }
+            });
+        });
+
+        // Fieldset legends / section headings
+        wrap.querySelectorAll('legend, .umbraco-forms-fieldset-legend, h3, h4, [class*="caption"], [class*="heading"]').forEach(function (el) {
+            var ar = translateText(labels, el.textContent);
+            if (ar) el.textContent = ar;
+        });
+
+        // Umbraco Forms label spans
+        wrap.querySelectorAll('.umbraco-forms-label, .field-label').forEach(function (el) {
+            var txt = el.childNodes[0];
+            if (txt && txt.nodeType === 3) {
+                var ar = translateText(labels, txt.textContent);
+                if (ar) txt.textContent = ar;
+            }
+        });
+
+        // Placeholders
+        wrap.querySelectorAll('input[placeholder], textarea[placeholder]').forEach(function (el) {
+            var ar = translateText(placeholders, el.getAttribute('placeholder'));
+            if (ar) el.setAttribute('placeholder', ar);
+        });
+
+        // Dropdown <option> values
+        wrap.querySelectorAll('select option').forEach(function (el) {
+            var ar = translateText(labels, el.textContent);
+            if (ar) el.textContent = ar;
+        });
+
+        // Submit button
+        wrap.querySelectorAll('input[type="submit"]').forEach(function (el) {
+            var ar = translateText(labels, el.value);
+            if (ar) el.value = ar;
+        });
+        wrap.querySelectorAll('button[type="submit"], button.btn').forEach(function (el) {
+            var ar = translateText(labels, el.textContent);
+            if (ar) el.textContent = ar;
+        });
+
+        // RTL direction
+        wrap.setAttribute('dir', 'rtl');
+    }
+
+    document.addEventListener('DOMContentLoaded', applyTranslations);
+    setTimeout(applyTranslations, 300);
+    setTimeout(applyTranslations, 1000);
+})();
+</script>
+}
 }
