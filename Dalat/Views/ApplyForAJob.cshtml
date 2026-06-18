@@ -153,6 +153,8 @@
         'ADDRESS'                 : 'العنوان',
         'City'                    : 'المدينة',
         'CITY'                    : 'المدينة',
+        'City/State'              : 'المدينة',
+        'CITY/STATE'              : 'المدينة',
         'Country'                 : 'الدولة',
         'COUNTRY'                 : 'الدولة',
         // Section headings
@@ -164,10 +166,42 @@
         'PROFESSIONAL INFORMATION' : 'المعلومات المهنية',
         'Additional Information'  : 'معلومات إضافية',
         'ADDITIONAL INFORMATION'  : 'معلومات إضافية',
-        // Submit
+        'Work Experience'         : 'الخبرة العملية',
+        'WORK EXPERIENCE'         : 'الخبرة العملية',
+        'Education'               : 'التعليم',
+        'EDUCATION'               : 'التعليم',
+        // Education fields
+        'Qualification'           : 'المؤهل العلمي',
+        'QUALIFICATION'           : 'المؤهل العلمي',
+        'The University'          : 'الجامعة',
+        'THE UNIVERSITY'          : 'الجامعة',
+        'University'              : 'جامعة',
+        'Major'                   : 'التخصص',
+        'MAJOR'                   : 'التخصص',
+        // Work experience fields
+        'Last Place Work'         : 'آخر جهة عمل',
+        'LAST PLACE WORK'         : 'آخر جهة عمل',
+        'Total years of experience' : 'إجمالي سنوات الخبرة',
+        'TOTAL YEARS OF EXPERIENCE' : 'إجمالي سنوات الخبرة',
+        'Years'                   : 'السنوات',
+        'YEARS'                   : 'السنوات',
+        'Job title'               : 'المسمى الوظيفي',
+        'Job Title'               : 'المسمى الوظيفي',
+        'JOB TITLE'               : 'المسمى الوظيفي',
+        'Attach CV'               : 'إرفاق السيرة الذاتية',
+        'ATTACH CV'               : 'إرفاق السيرة الذاتية',
+        // Thank you / confirmation
+        'Thank you'               : 'شكراً لك',
+        'Thank You'               : 'شكراً لك',
+        'THANK YOU'               : 'شكراً لك',
+        // Navigation buttons
         'Submit'                  : 'إرسال',
         'SUBMIT'                  : 'إرسال',
         'Send'                    : 'إرسال',
+        'Previous'                : 'السابق',
+        'PREVIOUS'                : 'السابق',
+        'Next'                    : 'التالي',
+        'NEXT'                    : 'التالي',
         // Dropdown options
         'Male'                    : 'ذكر',
         'Female'                  : 'أنثى',
@@ -241,7 +275,7 @@
             var ar = translateText(labels, el.value);
             if (ar) el.value = ar;
         });
-        wrap.querySelectorAll('button[type="submit"], button.btn').forEach(function (el) {
+        wrap.querySelectorAll('button[type="submit"], button[type="button"], button.btn, button').forEach(function (el) {
             var ar = translateText(labels, el.textContent);
             if (ar) el.textContent = ar;
         });
@@ -253,6 +287,123 @@
     document.addEventListener('DOMContentLoaded', applyTranslations);
     setTimeout(applyTranslations, 300);
     setTimeout(applyTranslations, 1000);
+})();
+</script>
+}
+
+<script>
+// ── Region → City dependency ──────────────────────────────────────────────
+(function () {
+    var REGION_ID = '524027bb-324f-4016-acd1-ce2b816990fd';
+    var CITY_ID   = 'e87805a5-8f28-4e1d-8dea-4ea1fc2f434c';
+
+    var citiesByRegion = {
+        'Riyadh':          ['الرياض','الخرج','المجمعة','الزلفي','الدوادمي','القويعية','وادي الدواسر','الأفلاج','الدرعية','عفيف','شقراء','حوطة بني تميم','ضرما','الحريق','المزاحمية','ثادق'],
+        'Makkah':          ['مكة المكرمة','جدة','الطائف','القنفذة','الليث','رابغ','خليص','الجموم','الكامل','أضم','المويه','تربة'],
+        'AlMedina':        ['المدينة المنورة','ينبع','العلا','المهد','بدر','الحناكية','خيبر','العيص','الوجه','أملج','مغيراء'],
+        'Qassim':          ['بريدة','عنيزة','الرس','المذنب','البكيرية','الأسياح','البدائع','رياض الخبراء','عيون الجواء','النبهانية','الخبراء'],
+        'EasternProvince': ['مليجه','الخبر','حفر الباطن','الجبيل','يبرين','الرفيعه','البويبيات','القيصومه','السعيره','الخفجى','اللهابه','الصرار','الاحساء','رأس تنورة','العيون','النعيريه','قريه العليا','القطيف','الدمام','بقيق'],
+        'Aseer':           ['أبها','خميس مشيط','بيشة','النماص','محايل عسير','تثليث','سراة عبيدة','رجال ألمع','أحد رفيدة','ظهران الجنوب','المجاردة','البرك','قلوة'],
+        'Tabouk':          ['تبوك','ضباء','تيماء','الوجه','أملج','حقل','البدع','شرما','قيال'],
+        'Hail':            ['حائل','بقعاء','الغزالة','الشنان','موقق','سميراء','الحائط','الشملي'],
+        'Northen':         ['عرعر','رفحاء','طريف','العويقيلة','لينة'],
+        'Jazan':           ['جازان','صبيا','أبو عريش','صامطة','الدرب','بيش','الريث','فرسان','العارضة','الحرث','ضمد','العيدابي'],
+        'Najran':          ['نجران','شرورة','حبونا','يدمة','بدر الجنوب','ثار','خباش'],
+        'Baha':            ['الباحة','بلجرشي','المخواة','قلوة','العقيق','المندق','غامد الزناد','الحجرة','القرى'],
+        'Jouf':            ['سكاكا','دومة الجندل','القريات','طبرجل','الحديثة']
+    };
+
+    var regions = [
+        { value: 'Riyadh',          label: 'منطقة الرياض' },
+        { value: 'Makkah',          label: 'منطقة مكة المكرمة' },
+        { value: 'AlMedina',        label: 'منطقة المدينة المنورة' },
+        { value: 'Qassim',          label: 'منطقة القصيم' },
+        { value: 'EasternProvince', label: 'المنطقة الشرقية' },
+        { value: 'Aseer',           label: 'منطقة عسير' },
+        { value: 'Tabouk',          label: 'منطقة تبوك' },
+        { value: 'Hail',            label: 'منطقة حائل' },
+        { value: 'Northen',         label: 'منطقة الحدود الشماليه' },
+        { value: 'Jazan',           label: 'منطقة جازان' },
+        { value: 'Najran',          label: 'منطقة نجران' },
+        { value: 'Baha',            label: 'منطقة الباحة' },
+        { value: 'Jouf',            label: 'منطقة الجوف' }
+    ];
+
+    function rebuildChoices(selectEl, placeholder) {
+        var inst = selectEl._choices;
+        if (inst) { try { inst.destroy(); } catch(e) {} }
+        if (typeof Choices !== 'undefined') {
+            var ni = new Choices(selectEl, { searchEnabled: true, itemSelectText: '', placeholder: true, placeholderValue: placeholder });
+            selectEl._choices = ni;
+        }
+    }
+
+    function populateRegionDropdown() {
+        var regionSelect = document.getElementById(REGION_ID);
+        if (!regionSelect || regionSelect.options.length > 1) return; // already populated
+        // Check if options already provided by the field type
+        var hasOptions = false;
+        for (var i = 0; i < regionSelect.options.length; i++) {
+            if (regionSelect.options[i].value) { hasOptions = true; break; }
+        }
+        if (hasOptions) return;
+
+        regionSelect.innerHTML = '<option value="">اختر المنطقة</option>';
+        regions.forEach(function (r) {
+            var opt = document.createElement('option');
+            opt.value = r.value; opt.textContent = r.label;
+            regionSelect.appendChild(opt);
+        });
+        rebuildChoices(regionSelect, 'اختر المنطقة');
+    }
+
+    function updateCityDropdown(regionValue) {
+        var citySelect = document.getElementById(CITY_ID);
+        if (!citySelect) return;
+
+        var cities = citiesByRegion[regionValue] || [];
+
+        // Clear and rebuild native select options
+        citySelect.innerHTML = '<option value="">اختر من القائمة</option>';
+        cities.forEach(function (city) {
+            var opt = document.createElement('option');
+            opt.value = city;
+            opt.textContent = city;
+            citySelect.appendChild(opt);
+        });
+
+        rebuildChoices(citySelect, 'اختر المدينة');
+    }
+
+    function wireRegionChange() {
+        var regionSelect = document.getElementById(REGION_ID);
+        if (!regionSelect) { setTimeout(wireRegionChange, 300); return; }
+
+        regionSelect.addEventListener('change', function () {
+            updateCityDropdown(this.value);
+        });
+
+        // Also listen for Choices.js custom event
+        regionSelect.addEventListener('choice', function (e) {
+            updateCityDropdown(e.detail && e.detail.choice ? e.detail.choice.value : regionSelect.value);
+        });
+
+        // Handle Choices.js wrapper clicks
+        var choicesWrapper = regionSelect.closest('.choices');
+        if (choicesWrapper) {
+            choicesWrapper.addEventListener('click', function () {
+                setTimeout(function () {
+                    updateCityDropdown(regionSelect.value);
+                }, 50);
+            });
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        setTimeout(populateRegionDropdown, 400);
+        wireRegionChange();
+    });
+    setTimeout(function () { populateRegionDropdown(); wireRegionChange(); }, 800);
 })();
 </script>
 }
