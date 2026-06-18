@@ -16,12 +16,14 @@
         var lang = ViewData["Lang"]?.ToString() ?? "ar";
         var isEn = lang == "en";
 
+        // (href, label)
+        // Scroll items use /#section-id so they work from any page
         var navItems = new[]
         {
-            ("About-dalat",               isEn ? "About Dalat"               : "عن دالات"),
-            ("Safe-Journey",              isEn ? "Safe Journey"              : "الرحلة الآمنة"),
-            ("Admission-and-registration",isEn ? "Admission and Registration": "القبول والتسجيل"),
-            ("employment",                isEn ? "Employment"                : "التوظيف"),
+            ("/#About-dalat",                isEn ? "About Dalat"                : "عن دالات"),
+            ("/#Safe-Journey",               isEn ? "Safe Journey"               : "الرحلة الآمنة"),
+            ("/#Admission-and-registration", isEn ? "Admission and Registration" : "القبول والتسجيل"),
+            ("/انضم-الينا",                  isEn ? "Employment"                 : "التوظيف"),
         };
     }
 
@@ -40,10 +42,10 @@
 
         <!-- Nav links (desktop inline / mobile dropdown) -->
         <ul class="nb-navList nb-mobileMenu" id="mobileMenu">
-            @foreach (var (id, label) in navItems)
+            @foreach (var (href, label) in navItems)
             {
-                <li class="nb-navItem" data-section="@id" onclick="scrollToSection('@id')">
-                    @label
+                <li class="nb-navItem">
+                    <a href="@href" class="nb-navLink">@label</a>
                 </li>
             }
         </ul>
@@ -71,9 +73,9 @@
         <div class="ft-topSection">
             <img src="~/logos/dalat-logo.png" alt="dalat-logo" class="ft-logo" />
             <div class="ft-footerLinksRow">
-                @foreach (var (id, label) in navItems)
+                @foreach (var (href, label) in navItems)
                 {
-                    <span onclick="scrollToSection('@id')" style="cursor:pointer">@label</span>
+                    <a href="@href" class="ft-footerLink">@label</a>
                 }
             </div>
         </div>

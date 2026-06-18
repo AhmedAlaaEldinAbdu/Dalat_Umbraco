@@ -1,0 +1,6 @@
+@using Umbraco.Cms.Core.Models.PublishedContent
+@model IPublishedContent
+
+<div>
+    @await Component.InvokeAsync("RenderForm", new { formId = Model?.Value("FormRef"), theme = "default", includeScripts = true })
+</div>

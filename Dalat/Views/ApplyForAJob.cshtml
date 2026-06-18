@@ -1,0 +1,187 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Extensions;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ApplyForAjob>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // ── Language ──────────────────────────────────────────────
+    var lang = Context.Request.Cookies["lang"] ?? "ar";
+    if (lang != "ar" && lang != "en") lang = "ar";
+    var isEn = lang == "en";
+    var dir  = isEn ? "ltr" : "rtl";
+
+    // ar-SA for dictionary translations (matches Umbraco language config)
+    // ar-EG is NOT used — it breaks dictionary lookups saved under ar-SA
+    var culture = isEn ? "en-US" : "ar-SA";
+
+    ViewData["Lang"]  = lang;
+    ViewData["Dir"]   = dir;
+
+    // ── Read properties with culture fallback ─────────────────
+    var pageTitle  = Model.Value<string>("pageTitle",  culture: culture)
+                  ?? Model.PageTitle
+                  ?? (isEn ? "Apply for a Job" : "التقديم على وظيفة");
+
+    var shortBrief = Model.Value<Umbraco.Cms.Core.Strings.IHtmlEncodedString>("shortBrief", culture: culture)
+                  ?? Model.ShortBrief;
+
+    var formTitle  = Model.Value<string>("formTitle",  culture: culture)
+                  ?? Model.FormTitle
+                  ?? (isEn ? "Job Application Form" : "نموذج التقديم على وظيفة");
+
+    var formDesc   = Model.Value<string>("formDescription", culture: culture)
+                  ?? Model.FormDescription
+                  ?? (isEn ? "Fill in the form below and we will get back to you shortly."
+                           : "يُرجى تعبئة النموذج أدناه وسنتواصل معك في أقرب وقت.");
+
+    var nafath = Model.ProtectedByNafath;
+
+    ViewData["Title"] = pageTitle + (isEn ? " – Dalat School" : " – مدارس دالات");
+}
+
+<!-- ═══════════════════════════════════════════
+     PAGE HEADER
+═══════════════════════════════════════════ -->
+<section class="ajb-header" dir="@dir">
+    <div class="ajb-headerInner">
+        <h1 class="ajb-pageTitle">@pageTitle</h1>
+        @if (shortBrief != null)
+        {
+            <div class="ajb-pageSubtitle">@shortBrief</div>
+        }
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     FORM CARD
+═══════════════════════════════════════════ -->
+<section class="ajb-section" dir="@dir">
+    <div class="ajb-card">
+
+        @if (!string.IsNullOrWhiteSpace(formTitle) || !string.IsNullOrWhiteSpace(formDesc))
+        {
+            <div class="ajb-formHeading" style="text-align:@(isEn ? "left" : "right")">
+                @if (!string.IsNullOrWhiteSpace(formTitle))
+                {
+                    <h2 class="ajb-formTitle">@formTitle</h2>
+                }
+                @if (!string.IsNullOrWhiteSpace(formDesc))
+                {
+                    <p class="ajb-formDesc">@formDesc</p>
+                }
+            </div>
+        }
+
+        @if (nafath)
+        {
+            <div class="ajb-nafath">
+                <img src="~/images/nafath-logo.png" alt="Nafath" class="ajb-nafathImg" />
+                <span>@(isEn ? "This form is protected by Nafath" : "هذا النموذج محمي بنفاذ")</span>
+            </div>
+        }
+
+        <div class="ajb-formWrap">
+            @if (Model.FormRef.HasValue)
+            {
+                @await Component.InvokeAsync("RenderForm", new
+                {
+                    formId         = Model.FormRef.Value,
+                    theme          = "default",
+                    includeScripts = true,
+                    culture        = culture
+                })
+            }
+            else
+            {
+                <p class="ajb-noForm">
+                    @(isEn
+                        ? "The application form is currently unavailable. Please try again later."
+                        : "نموذج التقديم غير متاح حالياً. يُرجى المحاولة لاحقاً.")
+                </p>
+            }
+        </div>
+
+    </div>
+</section>
+
+@section Scripts {
+<script>
+(function () {
+    var isEn = '@lang' === 'en';
+
+    var GR = {
+        changeMonth      : true,
+        changeYear       : true,
+        yearRange        : 'c-100:c+10',
+        dateFormat       : 'dd/mm/yy',
+        dayNames         : isEn
+            ? ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']
+            : ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'],
+        dayNamesShort    : isEn
+            ? ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+            : ['أحد','إثن','ثلا','أرب','خمي','جمع','سبت'],
+        dayNamesMin      : isEn
+            ? ['Su','Mo','Tu','We','Th','Fr','Sa']
+            : ['أح','إث','ث','أر','خ','ج','س'],
+        monthNames       : isEn
+            ? ['January','February','March','April','May','June','July','August','September','October','November','December']
+            : ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'],
+        monthNamesShort  : isEn
+            ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+            : ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'],
+        isRTL            : !isEn,
+        showMonthAfterYear: false,
+        yearSuffix       : '',
+        onSelect: function (dateText, inst) {
+            // Convert Arabic-Indic digits (٠-٩) to Western digits (0-9)
+            var western = dateText.replace(/[٠-٩]/g, function (d) {
+                return d.charCodeAt(0) - 0x0660;
+            });
+            // Also convert Extended Arabic-Indic digits (۰-۹) used by some locales
+            western = western.replace(/[۰-۹]/g, function (d) {
+                return d.charCodeAt(0) - 0x06F0;
+            });
+            $(this).val(western);
+        }
+    };
+
+    function installPatch() {
+        if (typeof $ === 'undefined' || !$.fn || !$.fn.datepicker) {
+            setTimeout(installPatch, 50);
+            return;
+        }
+
+        // ── Overwrite Arabic regionals so Forms gets Gregorian on init ──
+        $.datepicker.regional['ar']    = GR;
+        $.datepicker.regional['ar-SA'] = GR;
+        $.datepicker.regional['']      = GR;
+        $.datepicker.setDefaults(GR);
+
+        // ── Monkey-patch $.fn.datepicker so every future init uses GR ──
+        // String calls ('destroy', 'getDate', etc.) pass through untouched.
+        var _orig = $.fn.datepicker;
+        $.fn.datepicker = function (opts) {
+            if (typeof opts !== 'string') {
+                // Merge caller options with GR; GR fields always win
+                opts = $.extend({}, opts || {}, GR);
+                return _orig.call(this, opts);
+            }
+            return _orig.apply(this, arguments);
+        };
+        // Copy static members ($.fn.datepicker.regional etc.) across
+        $.extend($.fn.datepicker, _orig);
+
+        // ── Repatch any pickers already on the page ──
+        $('.ajb-formWrap .hasDatepicker').each(function () {
+            try { _orig.call($(this), 'destroy'); } catch(e) {}
+            _orig.call($(this), GR);
+        });
+    }
+
+    installPatch();
+    // Also run after page scripts finish, in case datepicker loaded late
+    document.addEventListener('DOMContentLoaded', installPatch);
+    setTimeout(installPatch, 300);
+})();
+</script>
+}
