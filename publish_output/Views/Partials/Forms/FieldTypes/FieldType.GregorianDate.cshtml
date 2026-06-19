@@ -1,0 +1,12 @@
+@using Umbraco.Forms.Web.Models
+@model FieldViewModel
+@{
+    var currentValue = Model.Values?.FirstOrDefault() ?? string.Empty;
+    var mandatory    = Model.Mandatory ? "required" : null;
+}
+<input type="date"
+       name="@Model.Alias"
+       id="@Model.Id"
+       value="@currentValue"
+       class="umbraco-forms-field-wrapper"
+       required="@mandatory" />

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="@(ViewData["Lang"]?.ToString() ?? "ar")" dir="@(ViewData["Dir"]?.ToString() ?? "rtl")">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(ViewData["Title"] ?? "مدارس دالات")</title>
+    <link rel="icon" href="~/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+
+    @{
+        var lang = ViewData["Lang"]?.ToString() ?? "ar";
+        var isEn = lang == "en";
+
+        // (href, label)
+        // Scroll items use /#section-id so they work from any page
+        var navItems = new[]
+        {
+            ("/#About-dalat",                isEn ? "About Dalat"                : "عن دالات"),
+            ("/#Safe-Journey",               isEn ? "Safe Journey"               : "الرحلة الآمنة"),
+            ("/#Admission-and-registration", isEn ? "Admission and Registration" : "القبول والتسجيل"),
+            ("/انضم-الينا",                  isEn ? "Employment"                 : "التوظيف"),
+        };
+    }
+
+    <!-- ===== NAVBAR ===== -->
+    <nav class="nb-navbar">
+
+        <!-- Hamburger (mobile) -->
+        <button class="nb-menuButton" id="menuBtn" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
+
+        <!-- Logo -->
+        <div class="nb-logoContainer">
+            <img src="~/logos/dalat-logo.png" alt="dalat-logo" class="nb-logo" />
+        </div>
+
+        <!-- Nav links (desktop inline / mobile dropdown) -->
+        <ul class="nb-navList nb-mobileMenu" id="mobileMenu">
+            @foreach (var (href, label) in navItems)
+            {
+                <li class="nb-navItem">
+                    <a href="@href" class="nb-navLink">@label</a>
+                </li>
+            }
+        </ul>
+
+        <!-- Language toggle -->
+        <div class="nb-leftSection">
+            <img src="~/images/lang-img.png" alt="language-icon" class="nb-langIcon" />
+            <form method="get" action="/SetLang" style="display:inline">
+                <input type="hidden" name="lang" value="@(isEn ? "ar" : "en")" />
+                <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                <button type="submit" class="nb-langBtn">
+                    @(isEn ? "اللغة العربية" : "اللغة الإنجليزية")
+                </button>
+            </form>
+        </div>
+    </nav>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main>
+        @RenderBody()
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="ft-footer">
+        <div class="ft-topSection">
+            <img src="~/logos/dalat-logo.png" alt="dalat-logo" class="ft-logo" />
+            <div class="ft-footerLinksRow">
+                @foreach (var (href, label) in navItems)
+                {
+                    <a href="@href" class="ft-footerLink">@label</a>
+                }
+            </div>
+        </div>
+        <hr class="ft-separator" />
+        <div class="ft-bottomSection">
+            <div class="ft-rightText">
+                @(isEn
+                    ? "Design with love © TanahAirStudio 2020. All rights reserved."
+                    : "صُمم بمحبة © TanahAirStudio 2020. جميع الحقوق محفوظة.")
+            </div>
+            <div class="ft-leftLinks" style="text-align:@(isEn ? "right" : "left")">
+                @if (isEn)
+                {
+                    @:Terms &amp; Conditions &nbsp;|&nbsp; Privacy Policy &nbsp;|&nbsp; Accessibility &nbsp;|&nbsp; Legal
+                }
+                else
+                {
+                    @:الشروط والأحكام &nbsp;|&nbsp; سياسة الخصوصية &nbsp;|&nbsp; سهولة الوصول &nbsp;|&nbsp; القانونية
+                }
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ── Smooth-scroll helper ──────────────────────────────
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // ── Active nav highlight on scroll ────────────────────
+        const navItems = document.querySelectorAll('.nb-navItem');
+        function updateActive() {
+            let current = '';
+            document.querySelectorAll('section[id]').forEach(s => {
+                const rect = s.getBoundingClientRect();
+                if (rect.top <= 150 && rect.bottom >= 150) current = s.id;
+            });
+            navItems.forEach(li => {
+                li.classList.toggle('nb-active', li.dataset.section === current);
+            });
+        }
+        window.addEventListener('scroll', updateActive, { passive: true });
+
+        // ── Mobile hamburger ──────────────────────────────────
+        const menuBtn  = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        menuBtn.addEventListener('click', () => {
+            menuBtn.classList.toggle('nb-activeMenuButton');
+            mobileMenu.classList.toggle('nb-showMenu');
+        });
+        // Close menu on nav-item click (mobile)
+        navItems.forEach(li => {
+            li.addEventListener('click', () => {
+                menuBtn.classList.remove('nb-activeMenuButton');
+                mobileMenu.classList.remove('nb-showMenu');
+            });
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
