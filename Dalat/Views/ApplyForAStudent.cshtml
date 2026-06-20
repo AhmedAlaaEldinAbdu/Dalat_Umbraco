@@ -1,0 +1,311 @@
+@using Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Extensions;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ApplyForAstudent>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var lang = Context.Request.Cookies["lang"] ?? "ar";
+    if (lang != "ar" && lang != "en") lang = "ar";
+    var isEn = lang == "en";
+    var dir  = isEn ? "ltr" : "rtl";
+    var culture = isEn ? "en-US" : "ar-SA";
+
+    ViewData["Lang"] = lang;
+    ViewData["Dir"]  = dir;
+
+    var pageTitle = Model.Value<string>("pageTitle", culture: culture)
+                 ?? Model.PageTitle
+                 ?? (isEn ? "Student Registration" : "تسجيل الطلاب");
+
+    var shortBrief = Model.Value<Umbraco.Cms.Core.Strings.IHtmlEncodedString>("shortBrief", culture: culture)
+                  ?? Model.ShortBrief;
+
+    var formTitle = Model.Value<string>("formTitle", culture: culture)
+                 ?? Model.FormTitle
+                 ?? (isEn ? "Student Registration Form" : "نموذج تسجيل الطلاب");
+
+    var formDesc = Model.Value<string>("formDescription", culture: culture)
+                ?? Model.FormDescription
+                ?? (isEn ? "Please fill in the form below to register your student."
+                         : "يُرجى تعبئة النموذج أدناه لتسجيل الطالب.");
+
+    ViewData["Title"] = pageTitle + (isEn ? " – Dalat School" : " – مدارس دالات");
+}
+
+<!-- PAGE HEADER -->
+<section class="ajb-header" dir="@dir">
+    <div class="ajb-headerInner">
+        <h1 class="ajb-pageTitle">@pageTitle</h1>
+        @if (shortBrief != null)
+        {
+            <div class="ajb-pageSubtitle">@shortBrief</div>
+        }
+    </div>
+</section>
+
+<!-- FORM CARD -->
+<section class="ajb-section" dir="@dir">
+    <div class="ajb-card">
+
+        @if (!string.IsNullOrWhiteSpace(formTitle) || !string.IsNullOrWhiteSpace(formDesc))
+        {
+            <div class="ajb-formHeading" style="text-align:@(isEn ? "left" : "right")">
+                @if (!string.IsNullOrWhiteSpace(formTitle))
+                {
+                    <h2 class="ajb-formTitle">@formTitle</h2>
+                }
+                @if (!string.IsNullOrWhiteSpace(formDesc))
+                {
+                    <p class="ajb-formDesc">@formDesc</p>
+                }
+            </div>
+        }
+
+        <div class="ajb-formWrap">
+            @if (Model.FormRef.HasValue)
+            {
+                @await Component.InvokeAsync("RenderForm", new
+                {
+                    formId         = Model.FormRef.Value,
+                    theme          = "default",
+                    includeScripts = true,
+                    culture        = culture
+                })
+            }
+            else
+            {
+                <p class="ajb-noForm">
+                    @(isEn
+                        ? "The registration form is currently unavailable. Please try again later."
+                        : "نموذج التسجيل غير متاح حالياً. يُرجى المحاولة لاحقاً.")
+                </p>
+            }
+        </div>
+
+    </div>
+</section>
+
+@section Scripts {
+<script>
+// Override moment Arabic locale to use Gregorian month names
+(function () {
+    function patchMoment() {
+        if (typeof moment === 'undefined') { setTimeout(patchMoment, 100); return; }
+        var arMonths = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+        moment.updateLocale('ar', { months: arMonths, monthsShort: arMonths });
+    }
+    patchMoment();
+})();
+</script>
+
+<script>
+(function translateForm() {
+    var isEn = @(isEn ? "true" : "false");
+
+    // English form labels → Arabic translation (used only in AR mode)
+    var enToAr = {
+        // Section headings
+        'Personal Information'        : 'المعلومات الشخصية',
+        'PERSONAL INFORMATION'        : 'المعلومات الشخصية',
+        'Student Information'         : 'معلومات الطالب',
+        'STUDENT INFORMATION'         : 'معلومات الطالب',
+        'Guardian Information'        : 'معلومات ولي الأمر',
+        'GUARDIAN INFORMATION'        : 'معلومات ولي الأمر',
+        'Academic Information'        : 'المعلومات الأكاديمية',
+        'ACADEMIC INFORMATION'        : 'المعلومات الأكاديمية',
+        // Field labels
+        'First Name'                  : 'الاسم الأول',
+        'FIRST NAME'                  : 'الاسم الأول',
+        'Student FIRST NAME'          : 'الاسم الأول للطالب',
+        'STUDENT FIRST NAME'          : 'الاسم الأول للطالب',
+        'Student Middle NAME'         : 'الاسم الثاني للطالب',
+        'Student Middle Name'         : 'الاسم الثاني للطالب',
+        'STUDENT MIDDLE NAME'         : 'الاسم الثاني للطالب',
+        'Student Last NAME'           : 'اسم عائلة الطالب',
+        'Student Last Name'           : 'اسم عائلة الطالب',
+        'STUDENT LAST NAME'           : 'اسم عائلة الطالب',
+        'Middle Name'                 : 'الاسم الثاني',
+        'MIDDLE NAME'                 : 'الاسم الثاني',
+        'Last Name'                   : 'اسم العائلة',
+        'LAST NAME'                   : 'اسم العائلة',
+        'National ID Number'          : 'رقم الهوية الوطنية',
+        'NATIONAL ID NUMBER'          : 'رقم الهوية الوطنية',
+        'Nationality'                 : 'الجنسية',
+        'NATIONALITY'                 : 'الجنسية',
+        'nationality'                 : 'الجنسية',
+        'birthDate'                   : 'تاريخ الميلاد',
+        'BirthDate'                   : 'تاريخ الميلاد',
+        'Gender'                      : 'الجنس',
+        'GENDER'                      : 'الجنس',
+        'Birth Date'                  : 'تاريخ الميلاد',
+        'BIRTH DATE'                  : 'تاريخ الميلاد',
+        'Date of Birth'               : 'تاريخ الميلاد',
+        'DATE OF BIRTH'               : 'تاريخ الميلاد',
+        'Relationship of the guardian': 'صلة قرابة ولي الأمر',
+        'RELATIONSHIP OF THE GUARDIAN': 'صلة قرابة ولي الأمر',
+        'Guardian Relation'           : 'صلة قرابة ولي الأمر',
+        'GUARDIAN RELATION'           : 'صلة قرابة ولي الأمر',
+        'Father Phone number'         : 'جوال الأب',
+        'FATHER PHONE NUMBER'         : 'جوال الأب',
+        'Father\'s Phone'             : 'جوال الأب',
+        'Mother Phone number'         : 'جوال الأم',
+        'MOTHER PHONE NUMBER'         : 'جوال الأم',
+        'Mother\'s Phone'             : 'جوال الأم',
+        'Email Address'               : 'البريد الإلكتروني',
+        'EMAIL ADDRESS'               : 'البريد الإلكتروني',
+        'Email'                       : 'البريد الإلكتروني',
+        'EMAIL'                       : 'البريد الإلكتروني',
+        'Branch'                      : 'الفرع',
+        'BRANCH'                      : 'الفرع',
+        'Academic Year'               : 'السنة الدراسية',
+        'ACADEMIC YEAR'               : 'السنة الدراسية',
+        'RegisterEducationalYear'     : 'السنة الدراسية',
+        'Semester'                    : 'الفصل الدراسي',
+        'SEMESTER'                    : 'الفصل الدراسي',
+        'RegisterSemesterID'          : 'الفصل الدراسي',
+        'Education System'            : 'النظام التعليمي',
+        'EDUCATION SYSTEM'            : 'النظام التعليمي',
+        'Grade'                       : 'الصف',
+        'GRADE'                       : 'الصف',
+        'RegisterGradeID'             : 'الصف',
+        // Dropdown options — gender
+        'Male'   : 'ذكر',
+        'Female' : 'أنثى',
+        // Dropdown options — guardian relation
+        'Father' : 'الأب',
+        'Mother' : 'الأم',
+        'Uncle'  : 'العم',
+        'Brother': 'الأخ',
+        'Other'  : 'غير ذلك',
+        // Dropdown options — nationality
+        'Saudi'      : 'سعودي',
+        'Egyptian'   : 'مصري',
+        'Yemeni'     : 'يمني',
+        'Syrian'     : 'سوري',
+        'Pakistani'  : 'باكستاني',
+        'Indian'     : 'هندي',
+        'Jordanian'  : 'أردني',
+        'Lebanese'   : 'لبناني',
+        'Palestinian': 'فلسطيني',
+        'Iraqi'      : 'عراقي',
+        // Dropdown options — semester
+        'First Semester'  : 'الفصل الأول',
+        'Second Semester' : 'الفصل الثاني',
+        'Third Semester'  : 'الفصل الثالث',
+        // Dropdown options — grade
+        'Grade 1'  : 'الأول الابتدائي',
+        'Grade 2'  : 'الثاني الابتدائي',
+        'Grade 3'  : 'الثالث الابتدائي',
+        'Grade 4'  : 'الرابع الابتدائي',
+        'Grade 5'  : 'الخامس الابتدائي',
+        'Grade 6'  : 'السادس الابتدائي',
+        'Grade 7'  : 'الأول المتوسط',
+        'Grade 8'  : 'الثاني المتوسط',
+        'Grade 9'  : 'الثالث المتوسط',
+        'Grade 10' : 'الأول الثانوي',
+        'Grade 11' : 'الثاني الثانوي',
+        'Grade 12' : 'الثالث الثانوي',
+        // Dropdown options — education system
+        'General Education' : 'تعليم عام',
+        // Placeholders
+        'Enter your first name'   : 'أدخل الاسم الأول',
+        'Enter your middle name'  : 'أدخل الاسم الثاني',
+        'Enter your Middle name'  : 'أدخل الاسم الثاني',
+        'Enter your last name'    : 'أدخل اسم العائلة',
+        'Enter your Last name'    : 'أدخل اسم العائلة',
+        'Enter your ID Number'    : 'أدخل رقم الهوية',
+        'Enter your mobile number': 'أدخل رقم الجوال',
+        'Enter your phone number' : 'أدخل رقم الهاتف',
+        'Example: mail@domain.com': 'مثال: mail@domain.com',
+        // Buttons
+        'Submit'   : 'إرسال',
+        'SUBMIT'   : 'إرسال',
+        'Next'     : 'التالي',
+        'NEXT'     : 'التالي',
+        'Previous' : 'السابق',
+        'PREVIOUS' : 'السابق',
+        // Select prompt
+        'Please select' : 'اختر...',
+        '-- Select --'  : 'اختر...',
+        'Select'        : 'اختر...',
+        // Thank you
+        'Thank you' : 'شكراً لك',
+        'Thank You' : 'شكراً لك'
+    };
+
+    function translate(text) {
+        if (!text) return null;
+        var t = text.trim();
+        // AR mode: English → Arabic. EN mode: keep as-is.
+        return !isEn ? (enToAr[t] || null) : null;
+    }
+
+    function applyTranslations() {
+        var wrap = document.querySelector('.ajb-formWrap');
+        if (!wrap) return;
+
+        // Section legends / headings
+        wrap.querySelectorAll('legend, h2, h3, h4').forEach(function (el) {
+            var tr = translate(el.textContent); if (tr) el.textContent = tr;
+        });
+
+        // Field labels (preserve child nodes like mandatory indicator *)
+        wrap.querySelectorAll('label').forEach(function (el) {
+            el.childNodes.forEach(function (node) {
+                if (node.nodeType === 3) {
+                    var tr = translate(node.textContent);
+                    if (tr) node.textContent = node.textContent.replace(node.textContent.trim(), tr);
+                }
+            });
+        });
+
+        // Dropdown options
+        wrap.querySelectorAll('select option').forEach(function (el) {
+            var tr = translate(el.textContent); if (tr) el.textContent = tr;
+        });
+
+        // Placeholders
+        wrap.querySelectorAll('input[placeholder], textarea[placeholder]').forEach(function (el) {
+            var tr = translate(el.getAttribute('placeholder')); if (tr) el.setAttribute('placeholder', tr);
+        });
+
+        // Submit / navigation buttons
+        wrap.querySelectorAll('input[type="submit"]').forEach(function (el) {
+            var tr = translate(el.value); if (tr) el.value = tr;
+        });
+        wrap.querySelectorAll('button').forEach(function (el) {
+            var tr = translate(el.textContent); if (tr) el.textContent = tr;
+        });
+
+        wrap.setAttribute('dir', isEn ? 'ltr' : 'rtl');
+    }
+
+    function translateValidation() {
+        var wrap = document.querySelector('.ajb-formWrap');
+        if (!wrap) return;
+        var msg = isEn ? 'This field is required.' : 'هذا الحقل مطلوب';
+        wrap.querySelectorAll('.field-validation-error, [data-valmsg-for]').forEach(function (el) {
+            var t = el.textContent.trim();
+            if (t === 'Field is required' || t === 'The field is required.' || t === 'هذا الحقل مطلوب') {
+                el.textContent = msg;
+            }
+        });
+        wrap.querySelectorAll('[data-val-required]').forEach(function (el) {
+            el.setAttribute('data-val-required', msg);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', applyTranslations);
+    setTimeout(applyTranslations, 300);
+    setTimeout(applyTranslations, 1000);
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var wrap = document.querySelector('.ajb-formWrap');
+        if (!wrap) return;
+        var obs = new MutationObserver(function () { applyTranslations(); translateValidation(); });
+        obs.observe(wrap, { childList: true, subtree: true, characterData: true });
+    });
+    setTimeout(translateValidation, 1500);
+})();
+</script>
+}
