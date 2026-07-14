@@ -1,0 +1,192 @@
+@using Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Extensions;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var lang = Context.Request.Cookies["lang"] ?? "ar";
+    if (lang != "ar" && lang != "en") lang = "ar";
+    var isEn = lang == "en";
+    var dir  = isEn ? "ltr" : "rtl";
+    var culture = isEn ? "en-US" : "ar-SA";
+
+    ViewData["Lang"] = lang;
+    ViewData["Dir"]  = dir;
+
+    var fmt = "dd MMM yyyy";
+
+    var title       = Model.Value<string>("pageTitle",      culture: culture) ?? Model.Name;
+    var descRaw     = Model.Value<string>("bodyText", culture: culture) ?? "";
+    var description = new Microsoft.AspNetCore.Html.HtmlString(descRaw);
+    var audience    = Model.Value<string>("targetAudience", culture: culture) ?? "";
+    var location    = Model.Value<string>("eventLocation",  culture: culture) ?? "";
+    var isLocal     = Model.Value<bool>("isLocalEvent");
+    var startDt     = Model.Value<DateTime?>("startDate");
+    var endDt       = Model.Value<DateTime?>("endDate");
+    var body        = Model.Value<IHtmlContent>("bodyText", culture: culture);
+    var startStr    = startDt.HasValue ? startDt.Value.ToString(fmt, System.Globalization.CultureInfo.InvariantCulture) : "";
+    var endStr      = endDt.HasValue   ? endDt.Value.ToString(fmt,   System.Globalization.CultureInfo.InvariantCulture) : "";
+
+    var cover          = Model.Value<Umbraco.Cms.Core.Models.MediaWithCrops>("coverImage");
+    var coverUrl       = cover?.MediaUrl();
+    var carouselImages = Model.Value<IEnumerable<Umbraco.Cms.Core.Models.MediaWithCrops>>("carouselImages")
+                         ?? Enumerable.Empty<Umbraco.Cms.Core.Models.MediaWithCrops>();
+    var carouselList   = carouselImages.ToList();
+
+    ViewData["Title"] = title + (isEn ? " – Dalat School" : " – مدارس دالات");
+    var parent = Model.Parent;
+
+    // icon SVGs
+    var icoCalendar = "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24' stroke='#1090cb' stroke-width='1.8'><rect x='3' y='4' width='18' height='18' rx='2'/><line x1='16' y1='2' x2='16' y2='6'/><line x1='8' y1='2' x2='8' y2='6'/><line x1='3' y1='10' x2='21' y2='10'/></svg>";
+    var icoPin      = "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24' stroke='#1090cb' stroke-width='1.8'><path d='M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1 1 18 0z'/><circle cx='12' cy='10' r='3'/></svg>";
+    var icoUsers    = "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24' stroke='#1090cb' stroke-width='1.8'><path d='M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'/><circle cx='9' cy='7' r='4'/><path d='M23 21v-2a4 4 0 0 0-3-3.87'/><path d='M16 3.13a4 4 0 0 1 0 7.75'/></svg>";
+    var icoDoc      = "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24' stroke='#1090cb' stroke-width='1.8'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/><polyline points='14 2 14 8 20 8'/><line x1='16' y1='13' x2='8' y2='13'/><line x1='16' y1='17' x2='8' y2='17'/></svg>";
+}
+
+<div class="aid-page" style="direction:@dir; text-align:@(isEn?"left":"right")">
+
+    <!-- BREADCRUMB -->
+    <div class="aid-breadcrumb">
+        @if (isEn)
+        {
+            <a href="/">Home</a><span class="aid-bsep">›</span>
+            @if (parent != null){ <a href="@parent.Url()">Activities</a><span class="aid-bsep">›</span> }
+            <span>@title</span>
+        }
+        else
+        {
+            <a href="/">الرئيسية</a><span class="aid-bsep">|</span>
+            @if (parent != null){ <a href="@parent.Url()">الفعاليات</a><span class="aid-bsep">|</span> }
+            <span>@title</span>
+        }
+    </div>
+
+    <!-- PAGE TITLE -->
+    <h1 class="aid-title">@title</h1>
+
+    <!-- CAROUSEL -->
+    @if (carouselList.Count > 0)
+    {
+        <div class="aid-carousel" id="aidCarousel">
+            <div class="aid-track" id="aidTrack">
+                @foreach (var img in carouselList)
+                {
+                    <div class="aid-slide">
+                        <img src="@img.MediaUrl()" alt="@title" />
+                    </div>
+                }
+            </div>
+            @if (carouselList.Count > 1)
+            {
+                <button class="aid-btn aid-btnL" onclick="aidSlide(-1)">&#8249;</button>
+                <button class="aid-btn aid-btnR" onclick="aidSlide(1)">&#8250;</button>
+                <div class="aid-dots">
+                    @for (int i = 0; i < carouselList.Count; i++)
+                    {
+                        <span class="aid-dot @(i==0?"aid-dotOn":"")" onclick="aidGoTo(@i)"></span>
+                    }
+                </div>
+            }
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(coverUrl))
+    {
+        <div class="aid-carousel"><img src="@coverUrl" alt="@title" style="width:100%;object-fit:cover;" /></div>
+    }
+
+    <!-- INFO PANEL -->
+    <div class="aid-panel">
+
+        <!-- Title row -->
+        <div class="aid-topRow">
+            <span class="aid-badge @(isLocal?"aid-local":"aid-intl")">
+                @(isLocal ? (isEn?"Local":"حدث محلي") : (isEn?"International":"دولي"))
+            </span>
+            <strong class="aid-panelTitle">@title</strong>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(descRaw))
+        {
+            <div class="aid-desc">@description</div>
+        }
+
+        <!-- Date -->
+        @if (!string.IsNullOrEmpty(startStr))
+        {
+            <hr class="aid-hr"/>
+            <div class="aid-row">
+                <div class="aid-rowHead">
+                    @Html.Raw(icoCalendar)
+                    <span class="aid-rowLabel">@(isEn?"Event Date :":"تاريخ الفعالية :")</span>
+                </div>
+                <div class="aid-rowVals">
+                    <span>@(isEn?"From :":"من تاريخ :") <strong>@startStr</strong></span>
+                    @if (!string.IsNullOrEmpty(endStr))
+                    {
+                        <span>@(isEn?"To :":"الى تاريخ :") <strong>@endStr</strong></span>
+                    }
+                </div>
+            </div>
+        }
+
+        <!-- Location -->
+        @if (!string.IsNullOrEmpty(location))
+        {
+            <hr class="aid-hr"/>
+            <div class="aid-row">
+                <div class="aid-rowHead">
+                    @Html.Raw(icoPin)
+                    <span class="aid-rowLabel">@(isEn?"Location :":"موقع الحدث :")</span>
+                </div>
+                <div class="aid-rowVals">
+                    <span>@location</span>
+                </div>
+            </div>
+        }
+
+        <!-- Audience -->
+        @if (!string.IsNullOrEmpty(audience))
+        {
+            <hr class="aid-hr"/>
+            <div class="aid-row">
+                <div class="aid-rowHead">
+                    @Html.Raw(icoUsers)
+                    <span class="aid-rowLabel">@(isEn?"Target Audience :":"الفئة المستهدفة :")</span>
+                </div>
+                <div class="aid-rowVals">
+                    <span>@audience</span>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+@if (body != null)
+{
+    <div class="aid-detailsSection" style="direction:@dir; text-align:@(isEn?"left":"right")">
+        <h2 class="aid-detailsTitle">
+            @Html.Raw(icoDoc)
+            @(isEn ? "Details" : "التفاصيل")
+        </h2>
+        <div class="aid-detailsBody">@body</div>
+    </div>
+}
+
+@if (carouselList.Count > 1)
+{
+    <script>
+    (function(){
+        var idx=0, total=@carouselList.Count, isRtl=@(isEn?"false":"true");
+        var track=document.getElementById('aidTrack');
+        var dots=document.querySelectorAll('#aidCarousel .aid-dot');
+        function go(){
+            track.style.transform='translateX('+(isRtl?idx:-idx)*100+'%)';
+            dots.forEach(function(d,i){d.classList.toggle('aid-dotOn',i===idx);});
+        }
+        window.aidSlide=function(d){idx=(idx+d+total)%total;go();};
+        window.aidGoTo=function(i){idx=i;go();};
+        setInterval(function(){aidSlide(1);},5000);
+    })();
+    </script>
+}
