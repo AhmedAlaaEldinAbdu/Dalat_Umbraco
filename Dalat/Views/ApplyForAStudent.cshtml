@@ -27,10 +27,25 @@
     var formDesc = Model.Value<string>("formDescription", culture: culture)
                 ?? Model.FormDescription
                 ?? (isEn ? "Please fill in the form below to register your student."
-                         : "يُرجى تعبئة النموذج أدناه لتسجيل الطالب.");
+                         : "يُرجى تعبئة النموذج أدناه لتسجيل الطالبة.");
 
     ViewData["Title"] = pageTitle + (isEn ? " – Dalat School" : " – مدارس دالات");
 }
+
+<style>
+  .ajb-formWrap .umbraco-forms-container {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 16px 24px !important;
+    width: 100% !important;
+    float: none !important;
+  }
+  @@media (max-width: 768px) {
+    .ajb-formWrap .umbraco-forms-container {
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>
 
 <!-- PAGE HEADER -->
 <section class="ajb-header" dir="@dir">
@@ -107,8 +122,8 @@
         // Section headings
         'Personal Information'        : 'المعلومات الشخصية',
         'PERSONAL INFORMATION'        : 'المعلومات الشخصية',
-        'Student Information'         : 'معلومات الطالب',
-        'STUDENT INFORMATION'         : 'معلومات الطالب',
+        'Student Information'         : 'معلومات الطالبة',
+        'STUDENT INFORMATION'         : 'معلومات الطالبة',
         'Guardian Information'        : 'معلومات ولي الأمر',
         'GUARDIAN INFORMATION'        : 'معلومات ولي الأمر',
         'Academic Information'        : 'المعلومات الأكاديمية',
@@ -116,20 +131,24 @@
         // Field labels
         'First Name'                  : 'الاسم الأول',
         'FIRST NAME'                  : 'الاسم الأول',
-        'Student FIRST NAME'          : 'الاسم الأول للطالب',
-        'STUDENT FIRST NAME'          : 'الاسم الأول للطالب',
-        'Student Middle NAME'         : 'الاسم الثاني للطالب',
-        'Student Middle Name'         : 'الاسم الثاني للطالب',
-        'STUDENT MIDDLE NAME'         : 'الاسم الثاني للطالب',
-        'Student Last NAME'           : 'اسم عائلة الطالب',
-        'Student Last Name'           : 'اسم عائلة الطالب',
-        'STUDENT LAST NAME'           : 'اسم عائلة الطالب',
+        'Student FIRST NAME'          : 'الاسم الأول للطالبة',
+        'STUDENT FIRST NAME'          : 'الاسم الأول للطالبة',
+        'Student Middle NAME'         : 'الاسم الثاني للطالبة',
+        'Student Middle Name'         : 'الاسم الثاني للطالبة',
+        'STUDENT MIDDLE NAME'         : 'الاسم الثاني للطالبة',
+        'Student Last NAME'           : 'اسم عائلة الطالبة',
+        'Student Last Name'           : 'اسم عائلة الطالبة',
+        'STUDENT LAST NAME'           : 'اسم عائلة الطالبة',
         'Middle Name'                 : 'الاسم الثاني',
         'MIDDLE NAME'                 : 'الاسم الثاني',
         'Last Name'                   : 'اسم العائلة',
         'LAST NAME'                   : 'اسم العائلة',
         'National ID Number'          : 'رقم الهوية الوطنية',
         'NATIONAL ID NUMBER'          : 'رقم الهوية الوطنية',
+        'Region'                      : 'المنطقة',
+        'REGION'                      : 'المنطقة',
+        'region'                      : 'المنطقة',
+        'Region '                     : 'المنطقة',
         'Nationality'                 : 'الجنسية',
         'NATIONALITY'                 : 'الجنسية',
         'nationality'                 : 'الجنسية',
@@ -237,7 +256,15 @@
         if (!text) return null;
         var t = text.trim();
         // AR mode: English → Arabic. EN mode: keep as-is.
-        return !isEn ? (enToAr[t] || null) : null;
+        // Try exact match first, then case-insensitive fallback
+        if (!isEn) {
+            if (enToAr[t]) return enToAr[t];
+            var keys = Object.keys(enToAr);
+            for (var i = 0; i < keys.length; i++) {
+                if (keys[i].toLowerCase() === t.toLowerCase()) return enToAr[keys[i]];
+            }
+        }
+        return null;
     }
 
     function applyTranslations() {
@@ -246,6 +273,11 @@
 
         // Section legends / headings
         wrap.querySelectorAll('legend, h2, h3, h4').forEach(function (el) {
+            var tr = translate(el.textContent); if (tr) el.textContent = tr;
+        });
+
+        // Submit / thank-you message
+        wrap.querySelectorAll('.umbraco-forms-submitmessage, .umbraco-forms-form p').forEach(function (el) {
             var tr = translate(el.textContent); if (tr) el.textContent = tr;
         });
 
@@ -295,7 +327,115 @@
         });
     }
 
+    // Force gender = Female only (girls school)
+    function forceGenderFemale() {
+        var wrap = document.querySelector('.ajb-formWrap');
+        if (!wrap) return;
+        wrap.querySelectorAll('select').forEach(function (sel) {
+            var label = '';
+            // Find associated label
+            if (sel.id) {
+                var lbl = wrap.querySelector('label[for="' + sel.id + '"]');
+                if (lbl) label = lbl.textContent.trim().toLowerCase();
+            }
+            if (label === 'gender' || label === 'الجنس' || label === 'جنس' || (label.indexOf('gender') !== -1 && label.indexOf('nationality') === -1 && label.indexOf('جنسية') === -1)) {
+                // Find the female option and select it
+                var femaleVal = null;
+                Array.from(sel.options).forEach(function (opt) {
+                    var t = opt.text.trim().toLowerCase();
+                    if (t === 'female' || t === 'أنثى' || t === 'انثى' || t === 'f') {
+                        femaleVal = opt.value;
+                    }
+                });
+                if (femaleVal !== null) {
+                    sel.value = femaleVal;
+                }
+                // Hide all options except the female one
+                Array.from(sel.options).forEach(function (opt) {
+                    if (opt.value !== femaleVal) opt.style.display = 'none';
+                });
+                // Do NOT disable — disabled fields are excluded from form submission
+                // Instead prevent changing via event listener
+                sel.style.backgroundColor = '#f5f5f5';
+                sel.style.cursor = 'not-allowed';
+                sel.style.pointerEvents = 'none';
+                sel.addEventListener('change', function() { this.value = femaleVal; });
+            }
+        });
+    }
+
+    // Fix date field: Umbraco Forms date picker uses a display input + hidden value input.
+    // On submit, copy the display value into the actual field if it's empty.
+    function fixDateFields() {
+        var wrap = document.querySelector('.ajb-formWrap');
+        if (!wrap) return;
+        var form = wrap.querySelector('form');
+        if (!form || form._dateFixed) return;
+        form._dateFixed = true;
+        form.addEventListener('submit', function() {
+            // Find date-type fields by their container class
+            wrap.querySelectorAll('.umbraco-forms-field.date input, .umbraco-forms-field.datepicker input').forEach(function(inp) {
+                if (!inp.value) {
+                    var display = wrap.querySelector('[data-input], .flatpickr-input:not([type="hidden"])');
+                    if (display && display.value) inp.value = display.value;
+                }
+            });
+            // Also handle input[type=date] directly
+            wrap.querySelectorAll('input[type="date"]').forEach(function(inp) {
+                // Trigger change event so Umbraco picks up the value
+                var ev = new Event('change', { bubbles: true });
+                inp.dispatchEvent(ev);
+            });
+        }, true); // capture phase = fires before validation
+    }
+
+    // Re-enable the page if a submit attempt failed validation.
+    // Umbraco Forms disables the form / shows an overlay while submitting;
+    // if validation fails it can stay stuck — undo that here.
+    function unlockPageAfterError() {
+        var wrap = document.querySelector('.ajb-formWrap');
+        if (!wrap) return;
+
+        function unlock() {
+            // Re-enable disabled fieldsets / buttons (but keep the gender lock)
+            wrap.querySelectorAll('fieldset[disabled], button[disabled], input[type="submit"][disabled]').forEach(function (el) {
+                el.disabled = false;
+            });
+            // Remove any full-page overlay/spinner Umbraco Forms may have left
+            document.querySelectorAll('.umbraco-forms-overlay, .umbraco-forms-submitting, .blockUI, .loading-overlay').forEach(function (el) {
+                el.remove();
+            });
+            // Restore pointer events / scrolling on body and form
+            document.body.style.pointerEvents = '';
+            document.body.style.overflow = '';
+            document.body.classList.remove('umbraco-forms-submitting');
+            var form = wrap.querySelector('form');
+            if (form) { form.style.pointerEvents = ''; form.classList.remove('submitting'); }
+        }
+
+        // Watch for validation errors appearing → unlock the page
+        var obs = new MutationObserver(function () {
+            var hasError = wrap.querySelector('.field-validation-error, .input-validation-error, .validation-summary-errors');
+            if (hasError) unlock();
+        });
+        obs.observe(wrap, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'disabled', 'style'] });
+
+        // Safety net: after any submit click, unlock shortly after if errors exist
+        wrap.addEventListener('click', function (e) {
+            if (e.target && (e.target.type === 'submit' || e.target.closest('button[type="submit"], input[type="submit"]'))) {
+                [500, 1200, 2500].forEach(function (ms) {
+                    setTimeout(function () {
+                        if (wrap.querySelector('.field-validation-error, .input-validation-error')) unlock();
+                    }, ms);
+                });
+            }
+        }, true);
+    }
+
     document.addEventListener('DOMContentLoaded', applyTranslations);
+    document.addEventListener('DOMContentLoaded', function(){ setTimeout(forceGenderFemale, 500); setTimeout(forceGenderFemale, 1500); });
+    document.addEventListener('DOMContentLoaded', function(){ setTimeout(fixDateFields, 800); setTimeout(fixDateFields, 2000); });
+    document.addEventListener('DOMContentLoaded', function(){ setTimeout(unlockPageAfterError, 500); });
     setTimeout(applyTranslations, 300);
     setTimeout(applyTranslations, 1000);
 
@@ -306,6 +446,53 @@
         obs.observe(wrap, { childList: true, subtree: true, characterData: true });
     });
     setTimeout(translateValidation, 1500);
+})();
+</script>
+
+<script>
+(function assignFieldOrder() {
+    // Desired label keywords → CSS order value
+    var ORDER_MAP = [
+        { keys: ['الاسم الأول', 'first name', 'student first'],           order: 1 },
+        { keys: ['الاسم الثاني', 'middle name', 'student middle'],        order: 2 },
+        { keys: ['اسم العائلة', 'last name', 'student last'],             order: 3 },
+        { keys: ['رقم الهوية', 'national id'],                            order: 4 },
+        { keys: ['صلة قرابة', 'guardian relation', 'relationship'],       order: 5 },
+        { keys: ['جوال الأب', 'father phone', "father's phone"],          order: 6 },
+        { keys: ['جوال الأم', 'mother phone', "mother's phone"],          order: 7 },
+        { keys: ['البريد', 'email'],                                       order: 8 },
+    ];
+
+    function getOrder(labelText) {
+        if (!labelText) return 50;
+        var t = labelText.trim().toLowerCase();
+        for (var i = 0; i < ORDER_MAP.length; i++)
+            for (var j = 0; j < ORDER_MAP[i].keys.length; j++)
+                if (t.indexOf(ORDER_MAP[i].keys[j].toLowerCase()) !== -1) return ORDER_MAP[i].order;
+        return 50;
+    }
+
+    function applyOrder() {
+        document.querySelectorAll('.ajb-formWrap .umbraco-forms-field').forEach(function(field) {
+            var lbl = field.querySelector('label');
+            var ord = getOrder(lbl ? lbl.textContent : '');
+            field.style.order = ord;
+        });
+    }
+
+    // Run at multiple delays to catch async rendering
+    [100, 400, 900, 2000].forEach(function(ms) { setTimeout(applyOrder, ms); });
+
+    // MutationObserver for form injection
+    var obs = new MutationObserver(function() {
+        if (document.querySelector('.ajb-formWrap .umbraco-forms-field')) {
+            applyOrder();
+        }
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        applyOrder();
+        obs.observe(document.querySelector('.ajb-formWrap') || document.body, { childList: true, subtree: true });
+    });
 })();
 </script>
 }

@@ -1,4 +1,5 @@
 @model Umbraco.Cms.Core.Models.ContentModel
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment WebHostEnv
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 
@@ -11,10 +12,15 @@
     ViewData["Dir"]  = dir;
     ViewData["Title"] = isEn ? "Dalat School" : "مدارس دالات";
 
+    // Hero photo: use the students photo once it is added, otherwise the illustration
+    string heroSrc = "/icons/hero.svg";
+    var heroPhoto  = System.IO.Path.Combine(WebHostEnv.WebRootPath, "images", "hero-students.png");
+    if (System.IO.File.Exists(heroPhoto)) heroSrc = "/images/hero-students.png";
+
 
     // ── translations ──────────────────────────────────────────
     // pageHeader
-    var ph_welcome     = isEn ? "Welcome to Dalat School"           : "مرحبًا بك في مدارس دالات";
+    var ph_welcome     = isEn ? "Welcome to Dalat School"           : "مرحبًا بك في مدارس دالات الأهلية";
     var ph_register    = isEn ? "Get started by registering"        : "للتسجيل";
 
     // about_dalat
@@ -96,9 +102,9 @@
     var rg_joinTitle   = isEn ? "Join our team"              : "للانضمام إلى فريق العمل";
     var rg_joinText    = isEn ? "If you believe that education is a mission, and you're looking for an environment that values your dedication… send your CV to the following email:"
                                : "إذا كنتِ ممن يؤمن بأن التعليم رسالة، ونبحث عن بيئة تُقدّر عطائك… أرسلي سيرتك الذاتية على البريد التالي:";
-    var rg_studTitle   = isEn ? "Student registration"       : "للتسجيل";
+    var rg_studTitle   = isEn ? "Register Now"               : "سجل الآن";
     var rg_studText    = isEn ? "We receive registration requests from parents wishing to schedule an introductory meeting. Contact us via WhatsApp:"
-                               : "نستقبل طلبات التسجيل من أولياء الأمور الراغبين في حجز مقابلة تعريفية، للتواصل عبر الواتساب:";
+                               : "كما نستقبل طلبات التسجيل من أولياء الأمور الراغبين في حجز مقابلة تعريفية، من خلال التواصل على واتساب :";
 
     // text alignment
     var textAlign = isEn ? "left" : "right";
@@ -109,12 +115,19 @@
      SECTION 1 — Page Header
 ═══════════════════════════════════════════ -->
 <section class="ph-pageHeader">
+    <!-- decorative background shapes -->
+    <span class="ph-blob ph-blob1"></span>
+    <span class="ph-blob ph-blob2"></span>
+    <span class="ph-blob ph-blob3"></span>
+
     <div class="ph-imageWrapper">
-        <img src="~/icons/hero.svg" alt="Hero" class="ph-heroImage" />
+        <img src="@heroSrc" alt="@(isEn ? "Dalat students" : "طالبات دالات")" class="ph-heroImage" />
     </div>
     <div class="ph-textContent">
+        <img src="~/logos/dalat-logo.png" alt="دالات" class="ph-logo" />
         <h1 class="ph-title">@ph_welcome</h1>
-        <a href="/تسجيل-الطالب" class="ph-ctaButton">
+        <p class="ph-location">@(isEn ? "Riyadh — Al-Aarid District" : "الرياض حي العارض")</p>
+        <a href="/تسجيل-الطالبة" class="ph-ctaButton">
             @ph_register
         </a>
     </div>
@@ -211,7 +224,17 @@
     </div>
 
     <div class="rg-cardsContainer">
-        <!-- Card 1: Join Team -->
+        <!-- Card 1: Student Registration -->
+        <div class="rg-card">
+            <img src="~/icons/story.svg" alt="Student Registration" class="rg-icon" />
+            <p class="rg-contact" style="color:#667eea; font-weight:600;">
+                <a href="/تسجيل-الطالبة" style="color:#667eea; font-weight:600; text-decoration:none;">@rg_studTitle</a>
+            </p>
+            <p  class="rg-cardText" style="text-align:@textAlign">@rg_studText</p>
+            <p  class="rg-contact">0553317849499 📞</p>
+        </div>
+
+        <!-- Card 2: Join Team -->
         <a href="/انضم-الينا" class="rg-card rg-cardLink" style="text-decoration:none; color:inherit;">
             <img src="~/icons/teacher.svg" alt="Join Team" class="rg-icon" />
             <h3 class="rg-cardTitle">@rg_joinTitle</h3>
@@ -220,13 +243,5 @@
                 @(isEn ? "Apply Now →" : "تقدمي الآن ←")
             </p>
         </a>
-
-        <!-- Card 2: Student Registration -->
-        <div class="rg-card">
-            <img src="~/icons/story.svg" alt="Student Registration" class="rg-icon" />
-            <h3 class="rg-cardTitle">@rg_studTitle</h3>
-            <p  class="rg-cardText" style="text-align:@textAlign">@rg_studText</p>
-            <p  class="rg-contact">0553317849499 📞</p>
-        </div>
     </div>
 </section>

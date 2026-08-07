@@ -69,7 +69,14 @@
                         new System.Globalization.CultureInfo(isEn ? "en-US" : "ar-SA"))
                     : string.Empty;
 
+                var thumb    = item.Value<Umbraco.Cms.Core.Models.MediaWithCrops>("thumbnail");
+                var thumbUrl = thumb?.MediaUrl();
+                var hasCover = !string.IsNullOrEmpty(thumbUrl);
+
                 <a href="@item.Url()" class="nws-card" style="text-decoration:none;">
+                    <div class="nws-cardImage @(hasCover ? "" : "nws-cardImageDefault")">
+                        <img src="@(hasCover ? thumbUrl : "/logos/dalat-logo.png")" alt="@title" loading="lazy" />
+                    </div>
                     <div class="nws-cardBody" style="text-align:@(isEn ? "left" : "right")">
                         <h2 class="nws-cardTitle">@title</h2>
                         @if (!string.IsNullOrWhiteSpace(summary))

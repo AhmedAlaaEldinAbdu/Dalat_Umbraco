@@ -20,10 +20,11 @@
        autocomplete="off"
        readonly="readonly" />
 
-@* Hidden input — submits ISO date value to Umbraco Forms *@
+@* Hidden input — submits ISO date value to Umbraco Forms (name must be the field Id) *@
 <input type="hidden"
        id="@shadowId"
-       name="@Model.Alias"
+       name="@Model.Id"
+       data-umb="@Model.Id"
        value="@currentValue" />
 
 <script>
@@ -48,6 +49,12 @@
         var field  = document.getElementById(FIELD_ID);
         var shadow = document.getElementById(SHADOW_ID);
         if (!field || !shadow || field._gdPicker) return;
+
+        // Restore display value after a failed postback (shadow keeps ISO yyyy-mm-dd)
+        if (shadow.value && !field.value) {
+            var parts = shadow.value.split('T')[0].split('-');
+            if (parts.length === 3) field.value = parts[2] + '/' + parts[1] + '/' + parts[0];
+        }
 
         // Today at local midnight — used to disable future dates
         var today = new Date();

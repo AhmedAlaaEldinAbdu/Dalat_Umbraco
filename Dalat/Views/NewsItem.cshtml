@@ -52,13 +52,10 @@
         }
     </div>
 
-    <!-- Thumbnail -->
-    @if (!string.IsNullOrEmpty(imgUrl))
-    {
-        <div class="ni-thumbWrap">
-            <img src="@imgUrl" alt="@pageTitle" class="ni-thumb" />
-        </div>
-    }
+    <!-- Thumbnail (falls back to Dalat logo) -->
+    <div class="ni-thumbWrap @(string.IsNullOrEmpty(imgUrl) ? "ni-thumbDefault" : "")">
+        <img src="@(string.IsNullOrEmpty(imgUrl) ? "/logos/dalat-logo.png" : imgUrl)" alt="@pageTitle" class="ni-thumb" />
+    </div>
 
     <!-- Body -->
     <div class="ni-body" style="text-align:@(isEn?"left":"right")">
