@@ -658,16 +658,35 @@ main {
    Page Header  (prefix: ph-)
    ============================================================ */
 .ph-pageHeader {
-  min-height: 548px;
+  /* Height tracks viewport width so the photo scales with it, but it never
+     eats a whole screenful on short windows, nor gets stubby on small laptops.
+     (min-height beats max-height in CSS, so the cap goes inside the clamp.)
+     The photo is pinned to this same value — see .ph-heroImage. */
+  /* The vw coefficients are tuned so the panel hits full size at ~1500px --
+     a typical laptop viewport at 100% zoom -- rather than needing ~1900px. */
+  --ph-height: clamp(420px, min(37.5vw, 68vh), 560px);
+  min-height: var(--ph-height);
   width: 100%;
-  background: linear-gradient(135deg, #eaf6fc 0%, #dff0f9 55%, #cfe9f5 100%);
+  /* Soft white swoosh over a light-blue wash, matching the brand banner */
+  background:
+    radial-gradient(115% 85% at 20% 48%, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0) 58%),
+    linear-gradient(160deg, #bfe2f6 0%, #ddeef8 45%, #cfe9f6 100%);
   display: flex;
   align-items: stretch;
   justify-content: space-between;
-  padding: 0 5vw;
+  padding-block: 0;
+  padding-inline-start: 0;   /* photo is the first child, it bleeds to the edge */
+  padding-inline-end: clamp(24px, 5vw, 96px);
   font-family: "Almarai", sans-serif;
   overflow: hidden;
   position: relative;
+}
+
+/* background-position is physical, so mirror the swoosh for LTR */
+[dir="ltr"] .ph-pageHeader {
+  background:
+    radial-gradient(115% 85% at 80% 48%, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0) 58%),
+    linear-gradient(200deg, #bfe2f6 0%, #ddeef8 45%, #cfe9f6 100%);
 }
 
 /* Decorative background blobs (behind content) */
@@ -678,80 +697,119 @@ main {
   z-index: 0;
 }
 
+/* Blobs live on the text side of the panel (inline-end mirrors with dir). */
+
+/* pale blue disc, top corner */
 .ph-blob1 {
-  width: 340px;
-  height: 340px;
-  background: #9fd8ee;
-  opacity: .35;
-  top: -110px;
-  inset-inline-start: -90px;
+  width: 420px;
+  height: 420px;
+  background: #a8d8f0;
+  opacity: .45;
+  top: -190px;
+  inset-inline-end: -120px;
 }
 
+/* wide teal arc sweeping across the bottom corner */
 .ph-blob2 {
-  width: 210px;
-  height: 210px;
-  background: #f5a623;
-  opacity: .22;
-  bottom: -70px;
-  inset-inline-start: 22%;
+  width: 1000px;
+  height: 1000px;
+  background: #06a9b8;
+  bottom: -905px;
+  inset-inline-end: -300px;
 }
 
+/* small teal accent riding on top of the arc */
 .ph-blob3 {
-  width: 150px;
-  height: 150px;
-  background: #17b8bd;
-  opacity: .18;
-  top: 18%;
-  inset-inline-end: 6%;
+  width: 190px;
+  height: 190px;
+  background: #2fb9c4;
+  opacity: .75;
+  bottom: -125px;
+  inset-inline-end: 26%;
+}
+
+/* faint blue circle floating mid-panel */
+.ph-blob4 {
+  width: 120px;
+  height: 120px;
+  background: #7fc9e8;
+  opacity: .28;
+  top: 12%;
+  inset-inline-end: 30%;
 }
 
 .ph-imageWrapper {
-  flex: 1;
+  flex: 0 0 auto;
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
-  max-width: 100%;
+  max-width: 55%;
   position: relative;
   z-index: 1;
 }
 
 .ph-heroImage {
+  display: block;
   width: auto;
-  height: 100%;
+  /* A definite height, NOT height:100%. Percentage heights don't constrain what
+     an image contributes to flex sizing, so the source's intrinsic 972px was
+     stretching the whole panel to ~900px regardless of min-height. */
+  height: var(--ph-height);
+  max-width: 100%;
   object-fit: contain;
+  object-position: bottom;
+  /* Dissolve the photo's inner edge into the panel so the crop line doesn't read
+     as a rectangle. The photo sits at the inline-end, so the inner edge flips
+     with document direction. */
+  -webkit-mask-image: linear-gradient(to left, #000 90%, transparent 100%);
+          mask-image: linear-gradient(to left, #000 90%, transparent 100%);
+}
+
+[dir="ltr"] .ph-heroImage {
+  -webkit-mask-image: linear-gradient(to right, #000 90%, transparent 100%);
+          mask-image: linear-gradient(to right, #000 90%, transparent 100%);
 }
 
 .ph-textContent {
-  flex: 1;
+  /* Shrink-to-fit + auto margins: on ultrawide the leftover space splits
+     evenly either side of the copy instead of piling up against the photo. */
+  flex: 0 1 auto;
+  max-width: 40em;
+  margin-inline: auto;
   display: flex;
   flex-direction: column;
-  align-items: baseline;
+  align-items: flex-end;      /* hug the outer (inline-end) edge of the panel */
   justify-content: center;
-  text-align: right;
+  text-align: start;
+  padding-block: clamp(24px, 3.75vw, 36px);
+  padding-inline-start: clamp(20px, 3.75vw, 48px);  /* gap from the photo */
   position: relative;
   z-index: 1;
 }
 
 .ph-logo {
-  width: 210px;
+  /* Kept close to the headline's width, the way the brand banner sets it. */
+  width: clamp(170px, 21vw, 320px);
   height: auto;
-  margin-bottom: 26px;
+  margin-bottom: clamp(14px, 2vw, 22px);
 }
 
 .ph-title {
-  font-size: 52px;
+  font-size: clamp(26px, 3.1vw, 42px);
   font-weight: 800;
-  line-height: 140%;
-  color: #14375f;
+  line-height: 135%;
+  color: #10365e;
   margin: 0 0 14px;
-  max-width: 12ch;
+  /* em, not ch — `ch` measures the "0" glyph and under-sizes Arabic.
+     ~11em keeps the headline on two lines like the brand banner. */
+  max-width: 11em;
 }
 
 .ph-location {
-  font-size: 26px;
+  font-size: clamp(16px, 1.7vw, 23px);
   font-weight: 700;
   color: #17b8bd;
-  margin: 0 0 28px;
+  margin: 0 0 clamp(16px, 2vw, 22px);
 }
 
 .ph-ctaButton {
@@ -759,19 +817,18 @@ main {
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  width: 273px;
-  height: 70px;
-  background-color: #f0921e;
+  width: clamp(180px, 17.5vw, 235px);
+  height: clamp(50px, 5vw, 64px);
+  background-color: #f2891c;
   color: #fff;
-  border: none;
+  border: 3px solid #ffffff;
   border-radius: 14px;
   padding: 0 16px;
-  font-size: 24px;
-  font-weight: 700;
+  font-size: clamp(18px, 1.9vw, 24px);
+  font-weight: 800;
   line-height: 150%;
-  letter-spacing: 0.5%;
   text-align: center;
-  box-shadow: 0 6px 22px rgba(240,146,30,0.32);
+  box-shadow: 0 8px 24px rgba(242,137,28,0.30);
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
   font-family: "Almarai", sans-serif;
@@ -782,102 +839,83 @@ main {
   transform: translateY(-2px);
 }
 
-@media (max-width: 1800px) {
-  .ph-heroImage {
-    height: 500px;
-  }
+/* Type and spacing above are fluid (clamp), so the only real breakpoints are
+   the ones that change the layout itself. */
 
-  .ph-logo {
-    width: 170px;
-    margin-bottom: 20px;
-  }
-
-  .ph-title {
-    font-size: 40px;
-  }
-
-  .ph-location {
-    font-size: 22px;
-  }
-
-  .ph-ctaButton {
-    width: 230px;
-    height: 56px;
-    font-size: 20px;
-  }
-}
-
+/* Tablet / small laptop: the copy and the photo stop fitting side by side. */
 @media (max-width: 1024px) {
   .ph-pageHeader {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 40px 5vw;
+    min-height: 0;
+    padding-inline: 5vw;
+    padding-block: 44px 0;
   }
 
   .ph-textContent {
     align-items: center;
-    margin-top: 20px;
+    text-align: center;
+    max-width: 34em;
+    padding-block: 0;
+    padding-inline-start: 0;
   }
 
   .ph-title {
-    font-size: 40px;
+    font-size: clamp(26px, 3.8vw, 36px);
     max-width: none;
   }
 
-  .ph-location {
-    font-size: 20px;
-  }
-
+  .ph-location  { font-size: clamp(16px, 2.1vw, 20px); }
   .ph-ctaButton {
-    width: 240px;
-    height: 60px;
-    font-size: 20px;
+    width: clamp(180px, 26vw, 220px);
+    height: clamp(50px, 7vw, 58px);
+    font-size: clamp(18px, 2.6vw, 21px);
   }
 
   .ph-imageWrapper {
     justify-content: center;
     align-items: flex-end;
+    max-width: 100%;
+    width: 100%;
+    margin-top: 28px;
   }
 
-  .ph-heroImage {
-    height: 400px;
+  /* Stacked: the photo has nothing to blend into sideways, so drop the edge
+     fade and let it sit centred at its natural aspect. */
+  .ph-heroImage,
+  [dir="ltr"] .ph-heroImage {
+    height: auto;
+    width: min(480px, 100%);
+    -webkit-mask-image: none;
+            mask-image: none;
   }
+
+  .ph-blob4 { display: none; }
 }
 
+/* Phone: shrink the decorative shapes so they stay behind the copy, and crop
+   the photo to a band instead of letting a tall portrait eat the fold. */
 @media (max-width: 768px) {
   .ph-pageHeader {
-    min-height: auto;
+    padding-block: 32px 0;
   }
 
-  .ph-logo {
-    width: 130px;
-    margin-bottom: 16px;
+  .ph-logo { margin-bottom: 14px; }
+  .ph-location { margin-bottom: 20px; }
+  .ph-ctaButton { border-width: 2px; }
+
+  .ph-heroImage,
+  [dir="ltr"] .ph-heroImage {
+    width: min(420px, 100%);
+    aspect-ratio: 5 / 4;
+    object-fit: cover;
+    object-position: 50% 22%;   /* keep both faces in frame */
   }
 
-  .ph-title {
-    font-size: 28px;
-    line-height: 130%;
-  }
-
-  .ph-location {
-    font-size: 17px;
-    margin-bottom: 20px;
-  }
-
-  .ph-ctaButton {
-    width: 220px;
-    height: 55px;
-    font-size: 18px;
-  }
-
-  .ph-heroImage {
-    height: 280px;
-  }
-
-  /* Blobs get in the way on small screens */
-  .ph-blob1 { width: 200px; height: 200px; top: -80px; }
-  .ph-blob2, .ph-blob3 { display: none; }
+  .ph-blob1 { width: 220px; height: 220px; top: -110px; inset-inline-end: -90px; }
+  .ph-blob2 { width: 700px; height: 700px; bottom: -645px; inset-inline-end: -220px; }
+  .ph-blob3 { display: none; }
 }
 
 /* ============================================================
