@@ -16,16 +16,22 @@
         var lang = ViewData["Lang"]?.ToString() ?? "ar";
         var isEn = lang == "en";
 
-        // (href, label)
-        // Scroll items use /#section-id so they work from any page
-        var navItems = new[]
+        // Scroll items use /#section-id so they work from any page.
+        // Show = false hides the item from both the navbar and the footer links;
+        // flip it back to true to bring the item back (the pages still exist).
+        var navItems = new (string Href, string Label, bool Show)[]
         {
-            ("/#About-dalat",                isEn ? "About Dalat"                : "عن دالات"),
-            ("/#Safe-Journey",               isEn ? "Safe Journey"               : "الرحلة الآمنة"),
-            ("/#Admission-and-registration", isEn ? "Admission and Registration" : "القبول والتسجيل"),
-            ("/انضم-الينا",                  isEn ? "Employment"                 : "التوظيف"),
-            ("/الاخبار-والاعلانات",            isEn ? "News"                       : "الأخبار"),
-            ("/الفعاليات",                    isEn ? "Activities"                 : "الفعاليات"),
+            ("/#Story",                      isEn ? "The Dalat Story"            : "قصة دالات",         true),
+            ("/#Curricula",                  isEn ? "Our Curricula"              : "مناهجنا",           true),
+            ("/#Kindergarten",               isEn ? "Kindergarten"               : "روضة دالات",        true),
+            ("/#Primary",                    isEn ? "Primary Stage"              : "الابتدائية",        true),
+            ("/#Intermediate",               isEn ? "Intermediate Stage"         : "المتوسطة",          true),
+            ("/#Secondary",                  isEn ? "Secondary Stage"            : "الثانوية",          true),
+            ("/#Activities",                 isEn ? "Activities"                 : "الأنشطة",           true),
+            ("/#Facilities",                 isEn ? "Our Facilities"             : "مرافقنا",           true),
+            ("/#Admission-and-registration", isEn ? "Admission and Registration" : "القبول والتسجيل",   true),
+            ("/الاخبار-والاعلانات",            isEn ? "News"                       : "الأخبار",           false),
+            ("/الفعاليات",                    isEn ? "Activities"                 : "الفعاليات",         false),
         };
     }
 
@@ -44,10 +50,12 @@
 
         <!-- Nav links (desktop inline / mobile dropdown) -->
         <ul class="nb-navList nb-mobileMenu" id="mobileMenu">
-            @foreach (var (href, label) in navItems)
+            @foreach (var item in navItems)
             {
+                if (!item.Show) { continue; }
+
                 <li class="nb-navItem">
-                    <a href="@href" class="nb-navLink">@label</a>
+                    <a href="@item.Href" class="nb-navLink">@item.Label</a>
                 </li>
             }
         </ul>
@@ -75,9 +83,11 @@
         <div class="ft-topSection">
             <img src="~/logos/dalat-logo.png" alt="dalat-logo" class="ft-logo" />
             <div class="ft-footerLinksRow">
-                @foreach (var (href, label) in navItems)
+                @foreach (var item in navItems)
                 {
-                    <a href="@href" class="ft-footerLink">@label</a>
+                    if (!item.Show) { continue; }
+
+                    <a href="@item.Href" class="ft-footerLink">@item.Label</a>
                 }
             </div>
         </div>

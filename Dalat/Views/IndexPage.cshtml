@@ -23,76 +23,281 @@
     var ph_welcome     = isEn ? "Welcome to Dalat National Schools" : "مرحبًا بكم في مدارس دالات الأهلية";
     var ph_register    = isEn ? "Register"                          : "التسجيل";
 
-    // about_dalat
-    var ad_title       = isEn ? "About Dalat"                       : "عن دالات";
-    var ad_desc        = isEn
-        ? "In the heart of Al-Aarid district in northern Riyadh, Dalat thrives with a renewed educational vision, led by founders with over 15 years of experience in establishing distinguished schools. Dalat is not just a school building—it is an environment where young girls grow with confidence and where the future takes shape with steady steps."
-        : "في قلب حي العارض شمال الرياض، تنبض دالات برؤية تعليمية متجددة، يقودها ملاك بخبرة تربوية تمتد لأكثر من 15 عامًا في تأسيس المدارس المتميزة. دالات ليست مجرد مبنى مدرسي، بل بيئة تنمو فيها الطالبات بثقة، ويتشكل فيها المستقبل بخطى ثابتة.";
+    // story
+    var st_title = isEn ? "The Dalat Story" : "قصة دالات";
 
-    // features
-    var df_pillars     = isEn ? "Three pillars that make Dalat exceptional"           : "ثلاث ركائز تصنع تميّز دالات";
+    // Headings for the story items. The source copy is four flowing paragraphs
+    // with no headings of their own — these summarise each one so the design's
+    // titled-item layout has something to show.
+    var storyHeads = isEn
+        ? new[] { "A vision, first", "A second home", "Three foundations", "Success, measured wider" }
+        : new[] { "البداية… رؤية تربوية", "بيت تعليمي ثانٍ", "ثلاث دعائم أساسية", "نجاح بمعنى أوسع" };
 
-    var cards = new[]
+    var storyParas = isEn
+        ? new[]
+        {
+            "Dalat was born from the vision of two educational supervisors who spent years in supervision and educational leadership, and saw first-hand how much a young girl needs a different kind of learning environment — a calm, safe one, away from crowding and noise, that gives her reassurance and confidence every school day.",
+            "And so Dalat came to be… more than a school; a second educational home, where a student feels safe and feels she belongs from the moment she walks in. We made a point of keeping the number of students smaller, of a healthy and well-prepared building that invites comfort and calm, and of qualified Saudi teachers who believe that building character matters no less than building knowledge.",
+            "Dalat rests on three foundations: a safe learning environment, a healthy and well-prepared building, and educational programmes that grow self-confidence, strengthen character and build skills — in genuine partnership with the family.",
+            "At Dalat, we do not measure success by academic achievement alone. We create an environment where a student grows with confidence, learns in calm, takes part boldly and discovers the best in herself — to step towards her future with steadiness and distinction.",
+        }
+        : new[]
+        {
+            "وُلدت دالات من رؤية اثنين من المشرفين التربويين، عملا لسنوات في الإشراف والقيادة التربوية، وشاهدا عن قرب حاجة الطفلة والطالبة إلى بيئة تعليمية مختلفة؛ بيئة هادئة وآمنة، بعيدة عن الازدحام والضجيج، تمنحها الطمأنينة والثقة في كل يوم دراسي.",
+            "ومن هنا جاءت دالات… لتكون أكثر من مدرسة؛ بيتًا تعليميًا ثانيًا، تشعر فيه الطالبة بالأمان والانتماء منذ لحظة دخولها. حرصنا على أن يكون عدد الطالبات أقل، وأن يكون المبنى صحيًا ومهيأً، يبعث على الراحة والهدوء، وأن تتولى تعليمهن معلمات سعوديات مؤهلات، يؤمنَّ بأن بناء الشخصية لا يقل أهمية عن بناء المعرفة.",
+            "وترتكز دالات على ثلاث دعائم أساسية: بيئة تعليمية آمنة، ومبنى صحي مهيأ، وبرامج تربوية وتعليمية تنمّي الثقة بالنفس، وتعزز الشخصية، وتبني المهارات، في شراكة حقيقية مع الأسرة.",
+            "وفي دالات، لا نقيس النجاح بالتحصيل العلمي وحده، بل نصنع بيئة تنمو فيها الطالبة بثقة، وتتعلّم بهدوء، وتشارك بجرأة، وتكتشف أفضل ما لديها؛ لتخطو نحو مستقبلها بثبات وتميز.",
+        };
+
+    // kindergarten
+    var kg_title = isEn ? "Dalat Kindergarten" : "روضة دالات";
+
+    // (heading, body, accent key) — accent drives the badge and dot colour
+    var kgItems = isEn
+        ? new[]
+        {
+            ("A safe, healthy environment", "At Dalat Kindergarten we believe the quality of education starts with a safe and healthy environment. That is why we keep class sizes small — no more than 20 children — with spacious rooms that reduce crowding and give every child more room to learn and play.", "teal"),
+            ("Advanced health facilities", "We have taken care of the health side through air purifiers, water-resistant flooring, and separating the assembly area from the play area to reduce crowding and mixing, along with making the most of natural light. Add to that smart touch-free washrooms — from soap to tissues and hand dryers — all reinforcing a healthy, safe environment for our children.", "blue"),
+            ("Qualified teachers", "Our children are supervised by qualified Saudi teachers, with two specialist teachers alternating in every class: one for Arabic and the other for English, so each child receives a high-quality, balanced education that meets the needs of every stage of growth from the earliest years.", "teal"),
+            ("An integrated creative curriculum", "On the educational side we follow the Creative Curriculum published by Obeikan — an integrated curriculum combining Arabic and English that offers a modern learning experience, growing the child's skills and planting a love of learning from the very beginning.", "orange"),
+        }
+        : new[]
+        {
+            ("بيئة آمنة وصحية", "في روضة دالات نؤمن أن جودة التعليم تبدأ من بيئة آمنة وصحية، لذلك حرصنا على أن تكون أعداد الأطفال في الفصول محدودة (حتى 20 طفلاً فقط)، مع فصول واسعة تقلل الازدحام وتمنح كل طفل مساحة أكبر للتعلم واللعب.", "teal"),
+            ("مرافق صحية متطورة", "واهتممنا بالجانب الصحي من خلال منقيات الهواء، والأرضيات المقاومة للماء، والفصل بين منطقة الطابور ومنطقة الألعاب لتقليل التزاحم والاختلاط، والاستفادة من الإضاءة الطبيعية، إضافة إلى دورات مياه ذكية تعمل دون لمس، من الصابون إلى المناديل ومجففات الأيدي، بما يعزز بيئة صحية وآمنة لأطفالنا.", "blue"),
+            ("معلمات مؤهلات", "ويشرف على أطفالنا معلمات سعوديات مؤهلات، ويتناوب على كل فصل معلمتان متخصصتان: إحداهما للغة العربية، والأخرى للغة الإنجليزية، ليحصل الطفل على تعليم نوعي ومتوازن يلبي متطلبات مراحل نموه منذ سنواته الأولى.", "teal"),
+            ("منهج إبداعي متكامل", "أما في الجانب التعليمي، فتعتمد المنهج الإبداعي من إصدارات العبيكان، وهو منهج متكامل يجمع بين العربية والإنجليزية، ويقدم تجربة تعليمية حديثة تنمي مهارات الطفل وتغرس لديه حب التعلم منذ البداية.", "orange"),
+        };
+
+    // curricula
+    var cu_title = isEn ? "Our Curricula" : "مناهجنا";
+
+    var cu_lead = isEn
+        ? "At Dalat Schools we start from the Saudi national curriculum and strengthen it with international educational programmes, to give our students a complete learning experience that combines academic excellence, mastery of English, and the growth of future skills."
+        : "في مدارس دالات ننطلق من المنهج الوطني السعودي، ونعززه ببرامج تعليمية عالمية؛ لنمنح طالباتنا تجربة تعليمية متكاملة تجمع بين التميز الأكاديمي، وإتقان اللغة الإنجليزية، وتنمية مهارات المستقبل.";
+
+    var cu_chips = isEn
+        ? new[] { "National curriculum", "Bilingual education", "Interactive learning platform", "Athar Qur'an programme", "Qudurat & Tahsili" }
+        : new[] { "منهج وطني", "تعليم ثنائي اللغة", "منصة تعليمية تفاعلية", "برنامج أثر للقرآن الكريم", "القدرات والتحصيلي" };
+
+    // (stage name, bullets)
+    var cu_stages = isEn
+        ? new (string Name, string[] Points)[]
+        {
+            ("Kindergarten", new[]{
+                "An integrated creative curriculum in Arabic, made up of 6 books covering linguistic, mathematical, scientific, social and environmental concepts.",
+                "The E-Planet Voices programme for developing English.",
+                "Math and Science taught in English.",
+                "The E-Planet interactive learning platform.",
+                "Qur'an taught through the Athar programme.",
+                "Assessment and follow-up tools for the child's growth, within a learning environment built on play and discovery." }),
+            ("Primary (Grades 1–6)", new[]{
+                "The Saudi national curriculum.",
+                "The E-Planet Voices programme for English.",
+                "Math and Science taught in English, while mathematics and science continue in Arabic, so the student masters scientific concepts and terms in both languages.",
+                "The E-Planet platform for digital learning and performance tracking.",
+                "Qur'an taught through the Athar programme." }),
+            ("Intermediate (Grades 7–9)", new[]{
+                "The Saudi national curriculum.",
+                "The Your Destination curriculum for English.",
+                "Math and Science taught in English, while mathematics and science continue in Arabic, reinforcing understanding and mastery of scientific terms in both languages.",
+                "An interactive learning platform supporting study and follow-up.",
+                "An early training programme for the Qudurat aptitude test, grounding students in verbal and quantitative skills and developing analytical and inferential thinking — preparing them early for secondary school and the national exams.",
+                "Qur'an taught through the Athar programme." }),
+            ("Secondary", new[]{
+                "The Saudi national curriculum.",
+                "An intensive programme for Qudurat (quantitative and verbal) and Tahsili, with regular training, mock exams and continuous follow-up, preparing students for the central exams and the best university admission opportunities.",
+                "Qur'an taught through the Athar programme." }),
+        }
+        : new (string Name, string[] Points)[]
+        {
+            ("رياض الأطفال", new[]{
+                "منهج إبداعي متكامل باللغة العربية يتكون من 6 كتب تغطي المفاهيم اللغوية، والرياضية، والعلمية، والاجتماعية، والبيئية.",
+                "برنامج E-Planet Voices لتنمية اللغة الإنجليزية.",
+                "تدريس Math وScience باللغة الإنجليزية.",
+                "منصة E-Planet التعليمية التفاعلية.",
+                "تدريس القرآن الكريم عبر برنامج (أثر).",
+                "أدوات تقييم ومتابعة لنمو الطفل داخل بيئة تعليمية تعتمد على اللعب والاستكشاف." }),
+            ("المرحلة الابتدائية (الأول–السادس)", new[]{
+                "المنهج الوطني السعودي.",
+                "برنامج E-Planet Voices للغة الإنجليزية.",
+                "تدريس Math وScience باللغة الإنجليزية، مع استمرار تدريس الرياضيات والعلوم باللغة العربية؛ لتمكين الطالبة من المفاهيم والمصطلحات العلمية باللغتين.",
+                "منصة E-Planet للتعلم الرقمي ومتابعة الأداء.",
+                "تدريس القرآن الكريم عبر برنامج (أثر)." }),
+            ("المرحلة المتوسطة (الأول–الثالث المتوسط)", new[]{
+                "المنهج الوطني السعودي.",
+                "منهج Your Destination للغة الإنجليزية.",
+                "تدريس Math وScience باللغة الإنجليزية، مع استمرار تدريس الرياضيات والعلوم باللغة العربية؛ لتعزيز الفهم وإتقان المصطلحات العلمية باللغتين.",
+                "منصة تعليمية تفاعلية داعمة للتعلم والمتابعة.",
+                "برنامج تدريبي مبكر لاختبار القدرات؛ يهدف إلى تأسيس الطالبات على مهارات القدرات اللفظية والكمية، وتنمية التفكير التحليلي والاستدلالي، بما يمنحهن استعدادًا مبكرًا للمرحلة الثانوية والاختبارات الوطنية.",
+                "تدريس القرآن الكريم عبر برنامج (أثر)." }),
+            ("المرحلة الثانوية", new[]{
+                "المنهج الوطني السعودي.",
+                "برنامج مكثف للقدرات (الكمي واللفظي) والتحصيلي؛ يتضمن تدريبًا منتظمًا، واختبارات محاكية، ومتابعة مستمرة؛ لإعداد الطالبات للاختبارات المركزية وتحقيق أفضل فرص القبول الجامعي.",
+                "تدريس القرآن الكريم عبر برنامج (أثر)." }),
+        };
+
+    var cu_highlightsTitle = isEn ? "Programme highlights" : "أبرز مميزات البرنامج";
+
+    var cu_highlights = isEn
+        ? new[]{
+            "The Saudi national curriculum, supported by international educational programmes.",
+            "Bilingual education, with mathematics and science taught in both Arabic and English.",
+            "Qur'an taught at every stage through the Athar programme.",
+            "Early grounding for the Qudurat test starting in intermediate school, followed by an intensive programme in secondary.",
+            "An interactive learning platform supporting study, follow-up and continuous assessment.",
+            "International curricula from Obeikan Education.",
+            "Close tracking of each student's level, with continuous development plans to secure the best learning outcomes." }
+        : new[]{
+            "المنهج الوطني السعودي مدعوم ببرامج تعليمية عالمية.",
+            "تعليم ثنائي اللغة مع تدريس الرياضيات والعلوم باللغتين العربية والإنجليزية.",
+            "تدريس القرآن الكريم في جميع المراحل عبر برنامج (أثر).",
+            "تأسيس مبكر لاختبار القدرات يبدأ من المرحلة المتوسطة، يليه برنامج مكثف في المرحلة الثانوية.",
+            "منصة تعليمية تفاعلية تدعم التعلم، والمتابعة، والتقييم المستمر.",
+            "مناهج عالمية من العبيكان التعليمية.",
+            "متابعة دقيقة لمستوى الطالبة وخطط تطوير مستمرة لضمان تحقيق أفضل المخرجات التعليمية." };
+
+    // primary stage
+    var pr_title = isEn ? "The Primary Stage at Dalat Schools" : "المرحلة الابتدائية في مدارس دالات";
+
+    var prParas = isEn
+        ? new[]
+        {
+            "The primary stage is where character starts to be built, so at Dalat Schools we designed a calm learning experience founded on small numbers, quality of learning, and attention to every single student.",
+            "Each student lives a school day that keeps renewing itself, moving between the classroom and specialist rooms: science, mathematics, English, computing, arts, activities, the school theatre, the sports studio and the prayer room — in a safe, welcoming environment away from crowding.",
+            "We believe character is built alongside knowledge, so we gave every class its own speaking platform and made the weekly activities open to everyone — building self-confidence, growing skills, and forming positive relationships.",
+            "Academically, we teach the national curriculum alongside an enrichment programme in English for science and mathematics, so concepts come together across both languages at the same time, deepening understanding and mastery.",
+            "The Qur'an receives particular care through the Athar programme and the Qur'an memorisation programme, so that academic excellence meets the building of values.",
+            "At Dalat… we create a calm learning environment that builds knowledge, strengthens character, and prepares each student for a confident future.",
+        }
+        : new[]
+        {
+            "المرحلة الابتدائية هي بداية بناء الشخصية، لذلك صممنا في مدارس دالات تجربة تعليمية هادئة تقوم على قلة الأعداد، وجودة التعلم، والاهتمام بكل طالبة.",
+            "تعيش الطالبة يومًا دراسيًا متجددًا يتنقل بين الفصل وقاعات متخصصة، تشمل: العلوم، والرياضيات، واللغة الإنجليزية، والحاسب الآلي، والفنون، والأنشطة، والمسرح المدرسي، والاستوديو الرياضي، والمصلى، في بيئة آمنة وجاذبة بعيدًا عن الازدحام.",
+            "نؤمن بأن الشخصية تُبنى مع المعرفة، لذلك خصصنا منبرًا للخطابة في كل فصل، وجعلنا الأنشطة الأسبوعية للجميع؛ لتعزيز الثقة بالنفس، وتنمية المهارات، وبناء العلاقات الإيجابية.",
+            "أكاديميًا، نُدرّس المنهج الوطني مع برنامج إثرائي باللغة الإنجليزية في العلوم والرياضيات، بحيث تتكامل المفاهيم بين اللغتين في الوقت نفسه، مما يعزز الفهم والتمكن.",
+            "كما يحظى القرآن الكريم بعناية خاصة من خلال برنامج “أثر” وبرنامج تحفيظ القرآن الكريم؛ ليجتمع التميز الأكاديمي مع البناء القيمي.",
+            "في دالات… نصنع بيئة تعليمية هادئة، تبني المعرفة، وتعزز الشخصية، وتُعد الطالبة لمستقبل واثق.",
+        };
+
+    // intermediate stage
+    var md_title = isEn ? "The Intermediate Stage at Dalat" : "المرحلة المتوسطة في دالات";
+
+    var mdParas = isEn
+        ? new[]
+        {
+            "The intermediate stage is one of the most important stages of education — the bridge a student crosses from childhood into a more mature stage, readier for the future. That is why we give it particular attention at Dalat Schools.",
+            "We make a point of keeping classes small in number, so every student gets the care and attention she needs at this age, with a focus on building confidence, strengthening emotional balance, and developing character.",
+            "We also provide foundational Qudurat sessions, preparing the student academically and in skills before the secondary stage, in a gradual way that suits her age and gives her a confident start.",
+            "We give student activities a great deal of attention, because they are the student's chance to discover her inclinations, grow her talents and build her character. So we encourage every student to take part in the different activities — helping them discover their capabilities, develop their skills, and strengthen a spirit of initiative and self-confidence.",
+            "Our aim is for the student to cross this stage with confidence and balance, moving on to the secondary stage readier in every sense: emotionally, academically, and personally.",
+        }
+        : new[]
+        {
+            "تُعد المرحلة المتوسطة من أهم المراحل التعليمية، فهي الجسر الذي تنتقل من خلاله الطالبة من الطفولة إلى مرحلة أكثر نضجًا واستعدادًا للمستقبل، ولذلك نوليها في مدارس دالات اهتمامًا خاصًا.",
+            "نحرص على أن تكون الفصول محدودة العدد؛ لتنال كل طالبة الرعاية والاهتمام الذي تحتاجه في هذه المرحلة العمرية، مع التركيز على بناء الثقة، وتعزيز الاتزان النفسي، وتنمية الشخصية.",
+            "كما نقدم حصصًا تأسيسية في القدرات؛ لتهيئة الطالبة علميًا ومهاريًا قبل المرحلة الثانوية، بأسلوب تدريجي يناسب عمرها ويمنحها بداية واثقة.",
+            "ونولي الأنشطة الطلابية اهتمامًا كبيرًا، لأنها تمثل فرصة للطالبة لاكتشاف ميولها، وتنمية مواهبها، وبناء شخصيتها. لذلك نشجع جميع الطالبات على المشاركة في مختلف الأنشطة، بما يساعدهن على اكتشاف قدراتهن، وتنمية مهاراتهن، وتعزيز روح المبادرة والثقة بالنفس.",
+            "هدفنا أن تعبر الطالبة هذه المرحلة بثقة واتزان، لتنتقل إلى المرحلة الثانوية وهي أكثر استعدادًا من الناحية النفسية، والأكاديمية، والشخصية.",
+        };
+
+    // secondary stage
+    var sc_title   = isEn ? "The Secondary Stage" : "المرحلة الثانوية";
+    var sc_tagline = isEn ? "Towards university… with confidence and distinction"
+                          : "نحو الجامعة… بثقة وتميز";
+    var sc_lead = isEn
+        ? "At Dalat National Schools we prepare each student academically and in skills to achieve the best results in secondary school, Qudurat and Tahsili, within a safe and motivating learning environment."
+        : "في مدارس دالات الأهلية، نُعد الطالبة أكاديميًا ومهاريًا لتحقيق أفضل النتائج في الثانوية والقدرات والتحصيلي، ضمن بيئة تعليمية آمنة ومحفزة.";
+
+    // (block title, body lines, render as a bullet list?)
+    var sc_blocks = isEn
+        ? new (string Name, string[] Body, bool AsList)[]
+        {
+            ("The Qudurat programme", new[]{
+                "6 sessions a week (3 quantitative + 3 verbal).",
+                "Starts from Grade 10.",
+                "Drills and mock exams.",
+                "Continuous follow-up and guidance on registration." }, true),
+            ("The Tahsili programme", new[]{
+                "Starts from Grade 12.",
+                "A comprehensive review of the syllabus.",
+                "Practice exams and an intensive revision plan." }, true),
+            ("Digital support", new[]{
+                "In partnership with the Al-Salem learning platform, we provide interactive explanations, question banks and practice tests." }, false),
+            ("A distinctive learning environment", new[]{
+                "A student lounge, a coffee corner, and quiet spaces for study — for a complete learning experience." }, false),
+        }
+        : new (string Name, string[] Body, bool AsList)[]
+        {
+            ("برنامج القدرات", new[]{
+                "6 حصص أسبوعيًا (3 كمي + 3 لفظي).",
+                "يبدأ من الصف الأول الثانوي.",
+                "تدريبات واختبارات محاكية.",
+                "متابعة مستمرة وإرشاد للتسجيل." }, true),
+            ("برنامج التحصيلي", new[]{
+                "يبدأ من الصف الثالث الثانوي.",
+                "مراجعة شاملة للمقررات.",
+                "اختبارات تجريبية وخطة مراجعة مكثفة." }, true),
+            ("دعم رقمي", new[]{
+                "بالتعاون مع منصة السالم التعليمية، نوفر شروحات تفاعلية، وبنوك أسئلة، واختبارات تدريبية." }, false),
+            ("بيئة تعليمية مميزة", new[]{
+                "صالة استراحة للطالبات، ركن للقهوة، ومساحات هادئة للمذاكرة، لتوفير تجربة تعليمية متكاملة." }, false),
+        };
+
+    var sc_closing = isEn
+        ? "At Dalat… we prepare each student to excel today, and to succeed at university tomorrow."
+        : "في دالات… نهيئ الطالبة للتفوق اليوم، والنجاح في الجامعة غدًا.";
+
+    // activities
+    var ac_title = isEn ? "Activities at Dalat" : "الأنشطة في دالات";
+
+    var ac_lead = isEn
+        ? "At Dalat Schools we believe activity is a fundamental part of building a student's character, so we made it a fixed weekly programme, announced to parents in advance."
+        : "في مدارس دالات، نؤمن بأن النشاط جزء أساسي من بناء شخصية الطالبة، لذلك حرصنا على أن يكون برنامجًا أسبوعيًا ثابتًا يُعلن عنه مسبقًا لأولياء الأمور.";
+
+    var ac_daysLabel = isEn ? "The activity runs across two days:" : "يُنفذ النشاط على يومين:";
+
+    // (day, what happens)
+    var ac_days = isEn
+        ? new[] { ("Monday", "Preparation and an introduction to the activity."),
+                  ("Tuesday", "Application and hands-on participation.") }
+        : new[] { ("الاثنين", "تهيئة وتعريف بالنشاط."),
+                  ("الثلاثاء", "التطبيق والمشاركة العملية.") };
+
+    var ac_variety = isEn
+        ? "Activities span scientific, cultural, religious, sporting, artistic and social fields, through a plan that keeps renewing itself across the school year."
+        : "وتتنوع الأنشطة بين المجالات العلمية، والثقافية، والدينية، والرياضية، والفنية، والاجتماعية، من خلال خطة متجددة طوال العام الدراسي.";
+
+    var ac_closing = isEn
+        ? "What sets Dalat's activities apart is that they are for everyone. We don't rely on fixed teams or limit them to students already gifted in one field — we encourage every student to take part and to try, so each one has the chance to grow her skills, discover her capabilities, and strengthen her confidence in herself."
+        : "ما يميز أنشطة دالات أنها أنشطة شاملة؛ فلا نعتمد على فرق ثابتة أو نقتصر على الطالبات الموهوبات في مجال معين، بل نحرص على تشجيع جميع الطالبات على المشاركة والتجربة، ليحظى كل فرد بفرصة تنمية مهاراته، واكتشاف قدراته، وتعزيز ثقته بنفسه.";
+
+    // facilities
+    var fc_title       = isEn ? "Our Facilities" : "مرافقنا";
+    var fc_hint        = isEn ? "Browse the gallery" : "استعرضي المرافق";
+
+    var facilityShots = new[]
     {
-        (
-            Image:    "/images/card1.png",
-            Title:    isEn ? "An Environment that Fosters Confidence and Capabilities" : "بيئة تنمّي الثقة والقدرات",
-            Subtitle: isEn ? "Bright classrooms and comfortable spaces… instill in the student a sense of safety and open horizons for growth."
-                           : "فصول مشرقة، ومساحات مريحة… تزرع في الطالبة شعور الأمان وتفتح لها آفاق النمو."
-        ),
-        (
-            Image:    "/images/card2.png",
-            Title:    isEn ? "Comfort Built on Care" : "راحة تُبنى على عناية",
-            Subtitle: isEn ? "Continuous sterilization and smart, carefully designed facilities… for a daily experience that is elegant and safe."
-                           : "تعقيم مستمر، ومرافق ذكية مصممة بعناية… لتجربة يومية راقية وآمنة."
-        ),
-        (
-            Image:    "/images/card3.png",
-            Title:    isEn ? "Learning That Is Lived, Not Memorized" : "تعلّم يُعاش لا يُحفظ",
-            Subtitle: isEn ? "Interactive activities and modern methods… make knowledge grow with the student, not limited to the book."
-                           : "أنشطة تفاعلية وأساليب حديثة… تجعل المعرفة تنمو مع الطالبة، لا تقف عند الكتاب."
-        ),
-    };
-
-    // safe journey
-    var sj_mainTitle    = isEn ? "Safe Journey"              : "الرحلة الآمنة";
-    var sj_mainSub      = isEn ? "Between movement, focus, and fun… we paint the features of the school as we dream it."
-                                : "ما بين الحركة، والتركيز، والمتعة… نرسم ملامح المدرسة كما نحلم بها.";
-
-    var facilities = new[]
-    {
-        (
-            Icon:     "/icons/estadios.svg",
-            Alt:      "Estadios",
-            Title:    isEn ? "Playgrounds and sports facilities" : "الملاعب والمرافق الرياضية",
-            Desc:     isEn ? "Spacious areas for movement and fun that boost physical activity and nurture team spirit."
-                           : "مساحات واسعة للحركة والمرح، تعزز النشاط البدني وتغذّي روح الفريق.",
-            ImgRight: true
-        ),
-        (
-            Icon:     "/icons/reading.svg",
-            Alt:      "Reading",
-            Title:    isEn ? "The Reading Corner and Library" : "ركن القراءة والمكتبة",
-            Desc:     isEn ? "A quiet corner that sparks imagination and instills a love of knowledge in an environment that encourages focus and calm."
-                           : "ركن هادئ يُشعل الخيال، ويغرس حب المعرفة في بيئة تحفّز التركيز والهدوء.",
-            ImgRight: false
-        ),
-        (
-            Icon:     "/icons/school-nursery.svg",
-            Alt:      "School Nursery",
-            Title:    isEn ? "School Nursery" : "مشتل المدرسة",
-            Desc:     isEn ? "A green space that teaches patience and growth, bringing students closer to nature through gardening activities that cultivate responsibility and belonging."
-                           : "مساحة خضراء تُعلّم الصبر والنمو، وتقرّب الطالبة من الطبيعة، من خلال أنشطة زراعية تزرع معها المسؤولية والانتماء.",
-            ImgRight: true
-        ),
-        (
-            Icon:     "/icons/virtual-reality-hall.svg",
-            Alt:      "Virtual Reality Hall",
-            Title:    isEn ? "Virtual Reality Hall" : "قاعة الواقع الافتراضي",
-            Desc:     isEn ? "An educational experience that takes you beyond the classroom boundaries… an interactive virtual world that enhances understanding and makes learning vivid and inspiring."
-                           : "تجربة تعليمية تنقلك خارج حدود الصف… عالم افتراضي تفاعلي يعزز الفهم، ويجعل التعلم حيًا وملهمًا.",
-            ImgRight: false
-        ),
+        (Image: "/images/facilities/science-lab.jpg",
+         Caption: isEn ? "Science Lab"            : "مختبر العلوم"),
+        (Image: "/images/facilities/computer-lab.jpg",
+         Caption: isEn ? "Computer Lab"           : "معمل الحاسب"),
+        (Image: "/images/facilities/smart-classroom.jpg",
+         Caption: isEn ? "Smart Classroom"        : "الفصل الذكي"),
+        (Image: "/images/facilities/classroom.jpg",
+         Caption: isEn ? "Classroom"              : "الفصول الدراسية"),
+        (Image: "/images/facilities/sports-court.jpg",
+         Caption: isEn ? "Indoor Sports Court"    : "الصالة الرياضية"),
+        (Image: "/images/facilities/activity-hall.jpg",
+         Caption: isEn ? "Activity Hall"          : "قاعة الأنشطة"),
+        (Image: "/images/facilities/playground.jpg",
+         Caption: isEn ? "Playground"             : "ساحة اللعب"),
+        (Image: "/images/facilities/corridor-mural.jpg",
+         Caption: isEn ? "Main Corridor"          : "الممر الرئيسي"),
+        (Image: "/images/facilities/atrium.jpg",
+         Caption: isEn ? "Central Atrium"         : "الفناء الداخلي"),
+        (Image: "/images/facilities/corridor-upper.jpg",
+         Caption: isEn ? "Upper Floor Corridor"   : "ممر الدور العلوي"),
     };
 
     // registration
@@ -108,7 +313,6 @@
 
     // text alignment
     var textAlign = isEn ? "left" : "right";
-    var marginTop = isEn ? "0" : "150px";
 }
 
 <!-- ═══════════════════════════════════════════
@@ -128,95 +332,436 @@
         <img src="~/logos/dalat-logo.png" alt="دالات" class="ph-logo" />
         <h1 class="ph-title">@ph_welcome</h1>
         <p class="ph-location">@(isEn ? "Riyadh — Al-Aarid District" : "الرياض حي العارض")</p>
-        <a href="/تسجيل-الطالبة" class="ph-ctaButton">
+        <a href="/#Admission-and-registration" class="ph-ctaButton">
             @ph_register
         </a>
     </div>
 </section>
 
 <!-- ═══════════════════════════════════════════
-     SECTION 2 — About Dalat
+     SECTION 2b — The Dalat Story
 ═══════════════════════════════════════════ -->
-<section id="About-dalat" class="ad-aboutSection">
-    <div class="ad-container">
-        <div class="ad-textContent">
-            <h2 class="ad-title" style="text-align:@textAlign">@ad_title</h2>
-            <p  class="ad-subtitle" style="text-align:@textAlign">@ad_desc</p>
-        </div>
-        <div class="ad-imageWrapper">
-            <img src="~/icons/about-dalat.svg" alt="@ad_title" class="ad-image" />
-        </div>
-    </div>
-</section>
-
-<!-- ═══════════════════════════════════════════
-     SECTION 3 — Dalat Features / Cards
-═══════════════════════════════════════════ -->
-<section class="df-featuresSection">
-    <h2 class="df-title">@df_pillars</h2>
-
-    <div class="df-cardsWrapper">
-        @foreach (var card in cards)
-        {
-            <div class="df-card">
-                <div class="df-imageContainer">
-                    <img src="@card.Image" alt="@card.Title" class="df-image" />
-                    <img src="~/icons/stars.svg" class="df-decorSvg df-decorTopLeft"    alt="" />
-                    <img src="~/icons/stars.svg" class="df-decorSvg df-decorBottomRight" alt="" />
-                    <img src="~/icons/stars.svg" class="df-decorSvg df-decorCenter"     alt="" />
-                    <img src="~/icons/stars.svg" class="df-decorSvg df-decorBottomLeft" alt="" />
-                    <img src="~/icons/stars.svg" class="df-decorSvg df-decorTopRight"   alt="" />
-                    <img src="~/icons/stars.svg" class="df-decorSvg df-decorTop"        alt="" />
-                </div>
-                <h3 class="df-cardTitle">@card.Title</h3>
-                <p  class="df-cardSubtitle" style="text-align:@textAlign">@card.Subtitle</p>
-            </div>
-        }
-    </div>
-</section>
-
-<!-- ═══════════════════════════════════════════
-     SECTION 4 — Safe Journey
-═══════════════════════════════════════════ -->
-<section id="Safe-Journey" class="sj-estadiosSection">
-    <div class="sj-header">
-        <h2 class="sj-mainTitle">@sj_mainTitle</h2>
-        <p  class="sj-mainSubtitle">@sj_mainSub</p>
-    </div>
-
-    @foreach (var (fac, idx) in facilities.Select((f, i) => (f, i)))
+@{
+    // Thin-stroke icons matching the reference design's badge treatment.
+    var storyIcons = new[]
     {
-        @if (fac.ImgRight)
-        {
-            <!-- text left / image right -->
-            <div class="sj-bottomContent">
-                <div class="sj-textContent" style="margin-top:@marginTop">
-                    <h3 class="sj-sideTitle"   style="text-align:@textAlign">@fac.Title</h3>
-                    <p  class="sj-sideSubtitle" style="text-align:@textAlign">@fac.Desc</p>
-                </div>
-                <div class="sj-svgWrapper">
-                    <img src="@fac.Icon" alt="@fac.Alt" class="sj-svgImage" />
-                </div>
-            </div>
-        }
-        else
-        {
-            <!-- image left / text right -->
-            <div class="sj-bottomContent">
-                <div class="sj-svgWrapper">
-                    <img src="@fac.Icon" alt="@fac.Alt" class="sj-svgImage" />
-                </div>
-                <div class="sj-textContent" style="margin-top:@marginTop">
-                    <h3 class="sj-sideTitle"   style="text-align:@textAlign">@fac.Title</h3>
-                    <p  class="sj-sideSubtitle" style="text-align:@textAlign">@fac.Desc</p>
-                </div>
-            </div>
-        }
-    }
+        // idea / vision
+        "<path d='M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.3.2.5.6.5 1V16h6v-1.1c0-.4.2-.8.5-1A6 6 0 0 0 12 3Z'/>",
+        // home
+        "<path d='M3 10.5 12 3l9 7.5'/><path d='M5.5 9.5V20h13V9.5'/><path d='M9.5 20v-5.5h5V20'/>",
+        // three pillars
+        "<path d='M3 20h18M4 20V9m6 11V9m10 11V9M2 9h20L12 3 2 9Z'/>",
+        // spark / growth
+        "<path d='M12 3v4M12 17v4M4.9 7.5l2.9 2.9M16.2 13.6l2.9 2.9M3 12h4M17 12h4M4.9 16.5l2.9-2.9M16.2 10.4l2.9-2.9'/>",
+    };
+}
+
+<section id="Story" class="st-section">
+    <div class="st-inner">
+        <!-- Copy first in DOM: RTL puts it on the right and the artwork on the
+             left, matching the reference; mirrors cleanly in English. -->
+        <div class="st-copy">
+            @* The artwork carries the قصة دالات lettering, so Arabic only needs the
+               heading for the document outline; English needs a visible one. *@
+            @if (isEn)
+            {
+                <h2 class="st-titleText">@st_title</h2>
+                <span class="st-rule" aria-hidden="true"></span>
+            }
+            else
+            {
+                <h2 class="st-srOnly">@st_title</h2>
+            }
+
+            <ul class="st-list">
+                @for (var i = 0; i < storyParas.Length; i++)
+                {
+                    <li class="st-item">                      
+                        <div class="st-itemBody">
+                            <h3 class="st-itemTitle">@storyHeads[i]</h3>
+                            <p class="st-itemText">@storyParas[i]</p>
+                        </div>
+                        <span class="st-badge" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                @Html.Raw(storyIcons[i])
+                            </svg>
+                        </span>
+                    </li>
+                }
+            </ul>
+
+            <a href="/#Facilities" class="st-cta">
+                <span>@(isEn ? "Explore our facilities" : "اكتشف مرافق دالات")</span>
+                <svg class="st-ctaArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M19 12H5M11 18l-6-6 6-6" />
+                </svg>
+            </a>
+        </div>
+
+        <div class="st-media">
+            <!-- The full artwork, uncropped. Its cream matches the section, so the
+                 space above and below it inside the column reads as page, not gap. -->
+            <img src="~/images/story-banner.jpg" alt="@(isEn ? "" : st_title)" class="st-banner" />
+        </div>
+    </div>
 </section>
 
 <!-- ═══════════════════════════════════════════
-     SECTION 5 — Admission & Registration
+     SECTION 2c — Our Curricula
+═══════════════════════════════════════════ -->
+<section id="Curricula" class="cu-section">
+    <div class="cu-inner">
+        <!-- Media first in DOM: RTL puts it on the right, copy on the left,
+             as requested. Mirrors in English. -->
+        <div class="cu-media">
+            <img src="~/images/curricula-banner.jpg" alt="@(isEn ? "" : cu_title)" class="cu-banner" />
+        </div>
+
+        <div class="cu-copy">
+            @if (isEn)
+            {
+                <h2 class="cu-titleText">@cu_title</h2>
+            }
+            else
+            {
+                @* The artwork carries the مناهج دالات lettering. *@
+                <h2 class="cu-srOnly">@cu_title</h2>
+            }
+
+            <p class="cu-lead">@cu_lead</p>
+
+            <ul class="cu-chips">
+                @foreach (var chip in cu_chips)
+                {
+                    <li class="cu-chip">@chip</li>
+                }
+            </ul>
+
+            <div class="cu-carousel">
+                <div class="cu-track" id="cuTrack" role="region"
+                     aria-roledescription="@(isEn ? "carousel" : "شرائح متتابعة")"
+                     aria-label="@(isEn ? "Curricula by stage" : "المناهج حسب المرحلة")">
+                    @* Highlights lead the carousel — the overview before the detail. *@
+                    <article class="cu-stage cu-highlights">
+                        <h3 class="cu-stageName">@cu_highlightsTitle</h3>
+                        <ul class="cu-points">
+                            @foreach (var hl in cu_highlights)
+                            {
+                                <li>@hl</li>
+                            }
+                        </ul>
+                    </article>
+
+                    @foreach (var stage in cu_stages)
+                    {
+                        <article class="cu-stage">
+                            <h3 class="cu-stageName">@stage.Name</h3>
+                            <ul class="cu-points">
+                                @foreach (var pt in stage.Points)
+                                {
+                                    <li>@pt</li>
+                                }
+                            </ul>
+                        </article>
+                    }
+                </div>
+
+                <div class="cu-dots" id="cuDots" role="tablist"
+                     aria-label="@(isEn ? "Choose a stage" : "اختيار المرحلة")"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     SECTION 2d — Dalat Kindergarten
+═══════════════════════════════════════════ -->
+@{
+    var kgIcons = new[]
+    {
+        // shield / safety
+        "<path d='M12 3 5 6v5.5c0 4.2 2.9 7.7 7 8.5 4.1-.8 7-4.3 7-8.5V6l-7-3Z'/><path d='m9 12 2 2 4-4'/>",
+        // droplet / hygiene
+        "<path d='M12 3.5s5.5 6 5.5 9.6A5.5 5.5 0 0 1 12 18.6a5.5 5.5 0 0 1-5.5-5.5C6.5 9.5 12 3.5 12 3.5Z'/><path d='M10 13.4a2 2 0 0 0 1.4 1.9'/>",
+        // two people / teachers
+        "<circle cx='9' cy='8' r='2.8'/><path d='M3.6 19a5.4 5.4 0 0 1 10.8 0'/><circle cx='16.5' cy='9' r='2.2'/><path d='M14.9 19h5.5a4.2 4.2 0 0 0-2.6-3.9'/>",
+        // open book / curriculum
+        "<path d='M12 6.5S10 4.8 6.5 4.8H3.5v12.4h3c3.5 0 5.5 1.7 5.5 1.7s2-1.7 5.5-1.7h3V4.8h-3C14 4.8 12 6.5 12 6.5Z'/><path d='M12 6.5v12.4'/>",
+    };
+}
+
+<section id="Kindergarten" class="kg-section">
+    <div class="kg-inner">
+        <!-- Copy first in DOM: RTL puts it on the right, the panel on the left. -->
+        <div class="kg-copy">
+            @if (isEn)
+            {
+                <h2 class="kg-titleText">@kg_title</h2>
+            }
+            else
+            {
+                @* The panel artwork carries the روضة دالات lettering. *@
+                <h2 class="kg-srOnly">@kg_title</h2>
+            }
+
+            <ul class="kg-list">
+                @for (var i = 0; i < kgItems.Length; i++)
+                {
+                    var it = kgItems[i];
+                    <li class="kg-item kg-@it.Item3">
+                        <span class="kg-dot" aria-hidden="true"></span>
+                        <div class="kg-itemBody">
+                            <h3 class="kg-itemTitle">@it.Item1</h3>
+                            <p class="kg-itemText">@it.Item2</p>
+                        </div>
+                        <span class="kg-badge" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                @Html.Raw(kgIcons[i])
+                            </svg>
+                        </span>
+                    </li>
+                }
+            </ul>
+        </div>
+
+        <div class="kg-media">
+            <img src="~/images/kindergarten-panel.jpg" alt="@(isEn ? "" : kg_title)" class="kg-panel" />
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 2e — Primary Stage
+═══════════════════════════════════════════ -->
+<section id="Primary" class="pr-section">
+    <div class="pr-inner">
+        <!-- Media first in DOM: RTL puts the artwork on the right, copy on the
+             left — alternating against the Kindergarten section above. -->
+        <div class="pr-media">
+            <img src="~/images/primary-banner.jpg" alt="@(isEn ? "" : pr_title)" class="pr-banner" />
+        </div>
+
+        <div class="pr-copy">
+            @if (isEn)
+            {
+                <h2 class="pr-titleText">@pr_title</h2>
+            }
+            else
+            {
+                @* The artwork carries the ابتدائية دالات lettering. *@
+                <h2 class="pr-srOnly">@pr_title</h2>
+            }
+
+            @for (var i = 0; i < prParas.Length; i++)
+            {
+                var cls = i == 0 ? "pr-para pr-lead"
+                        : i == prParas.Length - 1 ? "pr-para pr-closing"
+                        : "pr-para";
+                <p class="@cls">@prParas[i]</p>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 2f — Intermediate Stage
+═══════════════════════════════════════════ -->
+<section id="Intermediate" class="md-section">
+    <div class="md-inner">
+        <!-- Copy first in DOM: RTL puts it on the right and the artwork on the
+             left — alternating against the Primary section above. -->
+        <div class="md-copy">
+            @if (isEn)
+            {
+                <h2 class="md-titleText">@md_title</h2>
+            }
+            else
+            {
+                @* The artwork carries the متوسطة دالات lettering. *@
+                <h2 class="md-srOnly">@md_title</h2>
+            }
+
+            @for (var i = 0; i < mdParas.Length; i++)
+            {
+                var cls = i == 0 ? "md-para md-lead"
+                        : i == mdParas.Length - 1 ? "md-para md-closing"
+                        : "md-para";
+                <p class="@cls">@mdParas[i]</p>
+            }
+        </div>
+
+        <div class="md-media">
+            <img src="~/images/middle-banner.jpg" alt="@(isEn ? "" : md_title)" class="md-banner" />
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 2g — Secondary Stage
+═══════════════════════════════════════════ -->
+<section id="Secondary" class="sc-section">
+    <div class="sc-inner">
+        <!-- Media first in DOM: RTL puts the artwork on the right, copy on the
+             left — alternating against the Intermediate section above. -->
+        <div class="sc-media">
+            <img src="~/images/secondary-banner.jpg" alt="@(isEn ? "" : sc_title)" class="sc-banner" />
+        </div>
+
+        <div class="sc-copy">
+            @if (isEn)
+            {
+                <h2 class="sc-titleText">@sc_title</h2>
+            }
+            else
+            {
+                @* The artwork carries the ثانوية دالات lettering. *@
+                <h2 class="sc-srOnly">@sc_title</h2>
+            }
+
+            <p class="sc-tagline">@sc_tagline</p>
+            <p class="sc-lead">@sc_lead</p>
+
+            <div class="sc-blocks">
+                @foreach (var blk in sc_blocks)
+                {
+                    <article class="sc-block">
+                        <h3 class="sc-blockName">@blk.Name</h3>
+                        @if (blk.AsList)
+                        {
+                            <ul class="sc-points">
+                                @foreach (var line in blk.Body)
+                                {
+                                    <li>@line</li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            @foreach (var line in blk.Body)
+                            {
+                                <p class="sc-blockText">@line</p>
+                            }
+                        }
+                    </article>
+                }
+            </div>
+
+            <p class="sc-closing">@sc_closing</p>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 2h — Activities
+═══════════════════════════════════════════ -->
+<section id="Activities" class="ac-section">
+    <div class="ac-inner">
+        <!-- Copy first in DOM: RTL puts it on the right and the artwork on the
+             left — alternating against the Secondary section above. -->
+        <div class="ac-copy">
+            @if (isEn)
+            {
+                <h2 class="ac-titleText">@ac_title</h2>
+            }
+            else
+            {
+                @* The artwork carries the نشاطات دالات lettering. *@
+                <h2 class="ac-srOnly">@ac_title</h2>
+            }
+
+            <p class="ac-lead">@ac_lead</p>
+
+            <p class="ac-daysLabel">@ac_daysLabel</p>
+            <ul class="ac-days">
+                @foreach (var (day, what) in ac_days)
+                {
+                    <li class="ac-day">
+                        <span class="ac-dayName">@day</span>
+                        <span class="ac-dayText">@what</span>
+                    </li>
+                }
+            </ul>
+
+            <p class="ac-para">@ac_variety</p>
+            <p class="ac-para ac-closing">@ac_closing</p>
+        </div>
+
+        <div class="ac-media">
+            <img src="~/images/activities-banner.jpg" alt="@(isEn ? "" : ac_title)" class="ac-banner" />
+        </div>
+    </div>
+</section>
+<!-- ═══════════════════════════════════════════
+     SECTION 3 — Facilities (banner toggles the gallery below it)
+═══════════════════════════════════════════ -->
+<section id="Facilities" class="fc-section">
+    <button type="button"
+            class="fc-banner"
+            id="fcBannerBtn"
+            aria-expanded="true"
+            aria-controls="fcGallery">
+        <img src="~/images/facilities-decor-start.png" alt="" class="fc-decor" />
+
+        <span class="fc-copy">
+            <img src="~/logos/dalat-logo.png" alt="دالات" class="fc-logo" />
+            @if (isEn)
+            {
+                <span class="fc-titleText">@fc_title</span>
+            }
+            else
+            {
+                <img src="~/images/facilities-title-ar.png" alt="@fc_title" class="fc-titleImg" />
+            }
+            <span class="fc-hint">
+                @fc_hint
+                <svg class="fc-chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor"
+                          stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </span>
+        </span>
+
+        <img src="~/images/facilities-girl.png" alt="" class="fc-photo" />
+    </button>
+
+    <!-- Open by default; the banner button collapses/expands it. -->
+    <div class="fc-gallery" id="fcGallery">
+        <div class="fc-track" id="fcTrack">
+            @foreach (var shot in facilityShots)
+            {
+                <figure class="fc-slide">
+                    <img src="@shot.Image" alt="@shot.Caption" class="fc-slideImg" loading="lazy" />
+                    <figcaption class="fc-caption">@shot.Caption</figcaption>
+                </figure>
+            }
+        </div>
+
+        <button type="button" class="fc-nav fc-navPrev" id="fcPrev"
+                aria-label="@(isEn ? "Previous" : "السابق")">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor"
+                      stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </button>
+        <button type="button" class="fc-nav fc-navNext" id="fcNext"
+                aria-label="@(isEn ? "Next" : "التالي")">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M9 6l6 6-6 6" fill="none" stroke="currentColor"
+                      stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </button>
+
+        <div class="fc-dots" id="fcDots" role="tablist"
+             aria-label="@(isEn ? "Gallery slides" : "شرائح المعرض")"></div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 4 — Admission & Registration
 ═══════════════════════════════════════════ -->
 <section id="Admission-and-registration" class="rg-registrationSection">
     <div class="rg-header">
@@ -228,21 +773,223 @@
         <!-- Card 1: Student Registration -->
         <div class="rg-card">
             <img src="~/icons/story.svg" alt="Student Registration" class="rg-icon" />
-            <p class="rg-contact" style="color:#667eea; font-weight:600;">
-                <a href="/تسجيل-الطالبة" style="color:#667eea; font-weight:600; text-decoration:none;">@rg_studTitle</a>
-            </p>
+            <p class="rg-contact" style="color:#667eea; font-weight:600;">@rg_studTitle</p>
             <p  class="rg-cardText" style="text-align:@textAlign">@rg_studText</p>
-            <p  class="rg-contact">0553317849499 📞</p>
+            <p  class="rg-contact">0533349899 📞</p>
         </div>
 
         <!-- Card 2: Join Team -->
-        <a href="/انضم-الينا" class="rg-card rg-cardLink" style="text-decoration:none; color:inherit;">
+        <div class="rg-card">
             <img src="~/icons/teacher.svg" alt="Join Team" class="rg-icon" />
             <h3 class="rg-cardTitle">@rg_joinTitle</h3>
             <p  class="rg-cardText" style="text-align:@textAlign">@rg_joinText</p>
             <p  class="rg-contact" style="color:#667eea; font-weight:600;">
-                @(isEn ? "Apply Now →" : "تقدمي الآن ←")
+                dalatedu@@gmail.com
             </p>
-        </a>
+        </div>
     </div>
 </section>
+
+@section Scripts {
+<script>
+(function () {
+    var banner = document.getElementById('fcBannerBtn');
+    var gallery = document.getElementById('fcGallery');
+    var track = document.getElementById('fcTrack');
+    var dotsBox = document.getElementById('fcDots');
+    var prev = document.getElementById('fcPrev');
+    var next = document.getElementById('fcNext');
+    if (!banner || !gallery || !track) return;
+
+    var slides = Array.prototype.slice.call(track.querySelectorAll('.fc-slide'));
+    if (!slides.length) return;
+
+    // Gallery starts open (markup ships expanded); the banner toggles it shut.
+
+    // ── Dots ──────────────────────────────────────────────
+    var dots = slides.map(function (slide, i) {
+        var d = document.createElement('button');
+        d.type = 'button';
+        d.className = 'fc-dot';
+        d.setAttribute('role', 'tab');
+        d.setAttribute('aria-label', String(i + 1));
+        d.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+        d.addEventListener('click', function () { go(i); });
+        dotsBox.appendChild(d);
+        return d;
+    });
+
+    function go(i) {
+        i = Math.max(0, Math.min(slides.length - 1, i));
+        // scrollIntoView sidesteps RTL scrollLeft sign differences between browsers.
+        slides[i].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+
+    // Nearest slide to the viewport centre of the track wins.
+    function current() {
+        var box = track.getBoundingClientRect();
+        var mid = box.left + box.width / 2;
+        var best = 0, bestGap = Infinity;
+        slides.forEach(function (s, i) {
+            var r = s.getBoundingClientRect();
+            var gap = Math.abs(r.left + r.width / 2 - mid);
+            if (gap < bestGap) { bestGap = gap; best = i; }
+        });
+        return best;
+    }
+
+    function sync() {
+        var i = current();
+        dots.forEach(function (d, n) {
+            d.setAttribute('aria-selected', n === i ? 'true' : 'false');
+        });
+        prev.disabled = i === 0;
+        next.disabled = i === slides.length - 1;
+    }
+
+    // fc-navPrev/Next sit on physical sides, so in RTL they step the other way.
+    function isRtl() {
+        return getComputedStyle(track).direction === 'rtl';
+    }
+    prev.addEventListener('click', function () { go(current() + (isRtl() ? 1 : -1)); });
+    next.addEventListener('click', function () { go(current() + (isRtl() ? -1 : 1)); });
+
+    var tick;
+    track.addEventListener('scroll', function () {
+        clearTimeout(tick);
+        tick = setTimeout(sync, 90);
+    }, { passive: true });
+
+    track.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowRight') { go(current() + (isRtl() ? -1 : 1)); e.preventDefault(); }
+        if (e.key === 'ArrowLeft')  { go(current() + (isRtl() ? 1 : -1)); e.preventDefault(); }
+    });
+    track.tabIndex = 0;
+
+    // ── Banner toggle ─────────────────────────────────────
+    banner.addEventListener('click', function () {
+        var open = banner.getAttribute('aria-expanded') === 'true';
+        banner.setAttribute('aria-expanded', open ? 'false' : 'true');
+        gallery.hidden = open;
+        if (!open) {
+            sync();
+            gallery.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    });
+
+    window.addEventListener('resize', sync);
+    sync();
+})();
+
+// ── Curricula stage carousel (auto-advances every 5s) ─────────
+(function () {
+    var track = document.getElementById('cuTrack');
+    var dotsBox = document.getElementById('cuDots');
+    if (!track || !dotsBox) return;
+
+    var slides = Array.prototype.slice.call(track.querySelectorAll('.cu-stage'));
+    if (slides.length < 2) return;
+
+    var DELAY = 5000;
+
+    var dots = slides.map(function (slide, i) {
+        var d = document.createElement('button');
+        d.type = 'button';
+        d.className = 'cu-dot';
+        d.setAttribute('role', 'tab');
+        d.setAttribute('aria-label', String(i + 1));
+        d.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+        d.addEventListener('click', function () { go(i); restart(); });
+        dotsBox.appendChild(d);
+        return d;
+    });
+
+    function go(i) {
+        var target = slides[(i + slides.length) % slides.length];
+        // Deliberately NOT scrollIntoView: that scrolls every scrollable ancestor,
+        // so an auto-advance would yank the page back to this section from wherever
+        // the reader had scrolled to. scrollBy with a measured delta moves only the
+        // track, and measuring in client coords sidesteps the RTL scrollLeft sign
+        // differences between browsers.
+        var t = target.getBoundingClientRect();
+        var c = track.getBoundingClientRect();
+        var delta = (t.left + t.width / 2) - (c.left + c.width / 2);
+        if (Math.abs(delta) < 1) return;
+        track.scrollBy({ left: delta, behavior: still ? 'auto' : 'smooth' });
+    }
+
+    // Nearest slide to the track's centre wins.
+    function current() {
+        var box = track.getBoundingClientRect();
+        var mid = box.left + box.width / 2;
+        var best = 0, bestGap = Infinity;
+        slides.forEach(function (s, i) {
+            var r = s.getBoundingClientRect();
+            var gap = Math.abs(r.left + r.width / 2 - mid);
+            if (gap < bestGap) { bestGap = gap; best = i; }
+        });
+        return best;
+    }
+
+    function sync() {
+        var i = current();
+        dots.forEach(function (d, n) {
+            d.setAttribute('aria-selected', n === i ? 'true' : 'false');
+        });
+        // Offscreen slides are deliberately left in the a11y tree: they stay
+        // reachable by scrolling, so aria-hidden would hide real content.
+    }
+
+    // Honour reduced-motion: still navigable, just never moves on its own.
+    var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var timer = null;
+    var hovering = false;
+    // Only run while the carousel is actually on screen — no IntersectionObserver
+    // means we can't tell, so fall back to always-on.
+    var onScreen = !('IntersectionObserver' in window);
+
+    function stop() { if (timer) { clearInterval(timer); timer = null; } }
+    function start() {
+        if (still || timer || hovering || document.hidden || !onScreen) return;
+        timer = setInterval(function () { go(current() + 1); }, DELAY);
+    }
+    function restart() { stop(); start(); }
+
+    if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (entries) {
+            onScreen = entries[0].isIntersecting;
+            if (onScreen) { start(); } else { stop(); }
+        }, { threshold: 0.4 }).observe(track);
+    }
+
+    // Don't advance out from under someone reading or interacting.
+    function hold()    { hovering = true;  stop(); }
+    function release() { hovering = false; start(); }
+
+    ['pointerenter', 'focusin'].forEach(function (e) { track.addEventListener(e, hold); });
+    ['pointerleave', 'focusout'].forEach(function (e) { track.addEventListener(e, release); });
+    dotsBox.addEventListener('pointerenter', hold);
+    dotsBox.addEventListener('pointerleave', release);
+    document.addEventListener('visibilitychange', function () {
+        if (document.hidden) { stop(); } else { start(); }
+    });
+
+    var tick;
+    track.addEventListener('scroll', function () {
+        clearTimeout(tick);
+        tick = setTimeout(sync, 90);
+    }, { passive: true });
+
+    track.addEventListener('keydown', function (e) {
+        var rtl = getComputedStyle(track).direction === 'rtl';
+        if (e.key === 'ArrowRight') { go(current() + (rtl ? -1 : 1)); restart(); e.preventDefault(); }
+        if (e.key === 'ArrowLeft')  { go(current() + (rtl ? 1 : -1)); restart(); e.preventDefault(); }
+    });
+    track.tabIndex = 0;
+
+    window.addEventListener('resize', sync);
+    sync();
+    start();
+})();
+</script>
+}
