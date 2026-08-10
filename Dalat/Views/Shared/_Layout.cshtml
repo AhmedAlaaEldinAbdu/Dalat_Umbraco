@@ -1,10 +1,56 @@
 <!DOCTYPE html>
 <html lang="@(ViewData["Lang"]?.ToString() ?? "ar")" dir="@(ViewData["Dir"]?.ToString() ?? "rtl")">
+@{
+    var isEnMeta   = (ViewData["Lang"]?.ToString() ?? "ar") == "en";
+    var siteName   = isEnMeta ? "Dalat National Schools" : "مدارس دالات الأهلية";
+    var pageTitle  = ViewData["Title"]?.ToString();
+    if (string.IsNullOrWhiteSpace(pageTitle)) { pageTitle = siteName; }
+
+    // Per-page views can set ViewData["Description"]; this is the fallback.
+    var pageDesc = ViewData["Description"]?.ToString();
+    if (string.IsNullOrWhiteSpace(pageDesc))
+    {
+        pageDesc = isEnMeta
+            ? "Dalat National Schools for girls in Al-Aarid, north Riyadh — a healthy, safe education for kindergarten, primary, intermediate and secondary, with fewer students per class, wider spaces and a modern learning environment."
+            : "مدارس دالات الأهلية للبنات في حي العارض شمال الرياض، تقدم تعليمًا صحيًا وآمنًا لمراحل رياض الأطفال والابتدائي والمتوسط والثانوي، بعدد طالبات أقل ومساحات أوسع وبيئة تعليمية حديثة.";
+    }
+
+    // og:image and og:url must be absolute, so build them off the current request.
+    var origin    = $"{Context.Request.Scheme}://{Context.Request.Host}";
+    var canonical = origin + Context.Request.Path;
+    var ogImage   = origin + "/images/og-image.jpg";
+}
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@(ViewData["Title"] ?? "مدارس دالات")</title>
-    <link rel="icon" href="~/favicon.ico" />
+
+    <title>@pageTitle</title>
+    <meta name="description" content="@pageDesc" />
+    <meta name="application-name" content="@siteName" />
+    <link rel="canonical" href="@canonical" />
+
+    <!-- Icons: .ico for legacy, PNG for Google search results and mobile home screens -->
+    <link rel="icon" href="~/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="192x192" href="~/logo192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="~/logo512.png" />
+    <link rel="apple-touch-icon" href="~/logo192.png" />
+    <meta name="theme-color" content="#17b8bd" />
+
+    <!-- Link previews (Google, WhatsApp, Facebook, X) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="@siteName" />
+    <meta property="og:title" content="@pageTitle" />
+    <meta property="og:description" content="@pageDesc" />
+    <meta property="og:url" content="@canonical" />
+    <meta property="og:image" content="@ogImage" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="@(isEnMeta ? "en_US" : "ar_SA")" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@pageTitle" />
+    <meta name="twitter:description" content="@pageDesc" />
+    <meta name="twitter:image" content="@ogImage" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
